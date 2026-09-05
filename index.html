@@ -7,10 +7,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta name="version" content="1.1.1">
+  <meta name="version" content="1.1.2">
+  <!-- Favicon inline (💎) para evitar el 404 de favicon.ico -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💎</text></svg>">
   <title>DIAMOND CLUB — Poker Tracker</title>
   <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.1.1" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.1.2" rel="stylesheet">
   <style>
     :root {
       --bg: #050505;
@@ -547,7 +549,7 @@
           <input type="text" id="sessName" placeholder="Nombre de la sesión (ej: Viernes 20)" />
           <input type="number" id="sessDefaultBuyin" placeholder="Recarga por defecto ($)" step="0.01" value="5" />
         </div>
-        <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:'Orbitron',sans-serif; letter-spacing:1px;">
+        <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:Orbitron,sans-serif; letter-spacing:1px;">
           Ingresa las <strong style="color:var(--accent-orange);">recargas</strong> del banco y las <strong style="color:var(--accent-gold);">fichas finales</strong> de cada jugador.
         </div>
         <div id="sessPlayersArea"></div>
@@ -588,7 +590,7 @@
     // incrementar APP_VERSION y actualizar también:
     //   1. <meta name="version"> en el <head>
     //   2. el parámetro ?v= del link de Google Fonts
-    var APP_VERSION = '1.1.1';
+    var APP_VERSION = '1.1.2';
     document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
 
     var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
@@ -632,7 +634,7 @@
       if (data.players.length === 0) { el.innerHTML = '<div class="empty">No hay jugadores registrados</div>'; }
       else {
         el.innerHTML = data.players.map(function(p) {
-          return '<span class="player-chip">' + p + '<span class="x" onclick="removePlayer('' + p + '')">×</span></span>';
+          return '<span class="player-chip">' + p + '<span class="x" onclick="removePlayer(\'' + p + '\')">×</span></span>';
         }).join('');
       }
       var balances = {};
@@ -689,21 +691,21 @@
         html += '<span class="player-block-name">' + p + '</span>';
         html += '<span class="player-block-total">TOTAL PRESTADO: <strong style="color:var(--accent-gold);">$' + totalLoan.toFixed(2) + '</strong></span>';
         html += '</div>';
-        html += '<div style="font-size:11px; color:#444; font-family:'Orbitron',sans-serif; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">Recargas del banco</div>';
+        html += '<div style="font-size:11px; color:#444; font-family:Orbitron,sans-serif; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">Recargas del banco</div>';
         html += '<div class="reload-list">';
         draft.reloads.forEach(function(amt, idx) {
-          html += '<span class="reload-tag">$' + amt.toFixed(2) + '<span class="del" onclick="removeReload('' + p + '',' + idx + ')">×</span></span>';
+          html += '<span class="reload-tag">$' + amt.toFixed(2) + '<span class="del" onclick="removeReload(\'' + p + '\',' + idx + ')">×</span></span>';
         });
         if (draft.reloads.length === 0) html += '<span style="font-size:12px; color:#333;">Sin recargas</span>';
         html += '</div>';
         html += '<div class="reload-row">';
-        html += '<button class="btn btn-outline btn-small" onclick="addReload('' + p + '')">➕ Recarga $' + (document.getElementById('sessDefaultBuyin').value || 5) + '</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="addReload(\'' + p + '\')">➕ Recarga $' + (document.getElementById('sessDefaultBuyin').value || 5) + '</button>';
         html += '<input type="number" class="mini-input" style="width:110px;" placeholder="Otro monto" id="customReload_' + safeId + '" step="0.01" />';
-        html += '<button class="btn btn-outline btn-small" onclick="addCustomReload('' + p + '')">Agregar</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="addCustomReload(\'' + p + '\')">Agregar</button>';
         html += '</div>';
         html += '<div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">';
-        html += '<span style="font-size:12px; color:#555; font-family:'Orbitron',sans-serif; letter-spacing:1px; text-transform:uppercase;">Fichas finales</span>';
-        html += '<input type="number" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" step="0.01" value="' + (draft.final || '') + '" onchange="updateFinal('' + p + '', this.value)" />';
+        html += '<span style="font-size:12px; color:#555; font-family:Orbitron,sans-serif; letter-spacing:1px; text-transform:uppercase;">Fichas finales</span>';
+        html += '<input type="number" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" step="0.01" value="' + (draft.final || '') + '" onchange="updateFinal(\'' + p + '\', this.value)" />';
         html += '</div>';
         html += '</div>';
       });
@@ -771,8 +773,8 @@
         if (creditors[c].amount < 0.01) c++;
       }
 
-      var html = '<div style="margin-bottom:14px; font-size:12px; color:#555; font-family:'Orbitron',sans-serif; letter-spacing:1px;">NETO = Fichas finales − Total prestado</div>';
-      html += '<table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:10px;">Jugador</th><th style="text-align:left; padding:10px;">Recargas</th><th style="text-align:left; padding:10px;">Total prestado</th><th style="text-align:left; padding:10px;">Fichas finales</th><th style="text-align:left; padding:10px;">Neto</th></tr></thead><tbody>';
+      var html = '<div style="margin-bottom:14px; font-size:12px; color:#555; font-family:Orbitron,sans-serif; letter-spacing:1px;">NETO = Fichas finales − Total prestado</div>';
+      html += '<table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:Orbitron,sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:10px;">Jugador</th><th style="text-align:left; padding:10px;">Recargas</th><th style="text-align:left; padding:10px;">Total prestado</th><th style="text-align:left; padding:10px;">Fichas finales</th><th style="text-align:left; padding:10px;">Neto</th></tr></thead><tbody>';
       results.forEach(function(r) {
         var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
         var sign = r.net > 0 ? '+' : '';
@@ -782,9 +784,9 @@
       html += '</tbody></table>';
 
       if (transactions.length === 0) {
-        html += '<div style="text-align:center; padding:18px; color:var(--accent-green); font-family:'Orbitron',sans-serif; font-size:12px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ TODOS QUEDARON A MANO</div>';
+        html += '<div style="text-align:center; padding:18px; color:var(--accent-green); font-family:Orbitron,sans-serif; font-size:12px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ TODOS QUEDARON A MANO</div>';
       } else {
-        html += '<h4 style="color:var(--accent-gold); margin-bottom:12px; font-family:'Orbitron',sans-serif; font-size:12px; letter-spacing:2px;">TRANSFERENCIAS</h4>';
+        html += '<h4 style="color:var(--accent-gold); margin-bottom:12px; font-family:Orbitron,sans-serif; font-size:12px; letter-spacing:2px;">TRANSFERENCIAS</h4>';
         transactions.forEach(function(t) {
           html += '<div class="settle-card"><span style="color:#ff4444; font-weight:700;">' + t.from + '</span> <span style="color:#444;">→</span> <span style="color:var(--accent-gold); font-weight:700;">' + t.to + '</span> <span style="color:var(--accent-green); font-weight:700; margin-left:8px;">$' + t.amount.toFixed(2) + '</span></div>';
         });
@@ -803,7 +805,7 @@
       html += '<div><div class="bank-stat-label">Diferencia</div><div class="bank-stat-value" style="color:' + color + ';">$' + diff.toFixed(2) + '</div></div>';
       html += '</div>';
       if (Math.abs(diff) < 0.01) {
-        html += '<div style="text-align:center; color:var(--accent-green); font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ CUENTAS DEL BANCO CUADRAN</div>';
+        html += '<div style="text-align:center; color:var(--accent-green); font-family:Orbitron,sans-serif; font-size:11px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ CUENTAS DEL BANCO CUADRAN</div>';
       } else if (diff > 0) {
         html += '<div style="text-align:center; color:#ff4444; font-size:13px;">⚠ Hay <strong>$' + diff.toFixed(2) + '</strong> de más en fichas</div>';
       } else {
@@ -821,10 +823,10 @@
       reversed.forEach(function(s) {
         html += '<div class="card" style="margin-bottom:14px;">';
         html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">';
-        html += '<h4 style="color:var(--accent-gold); margin:0; font-family:'Orbitron',sans-serif; font-size:13px; letter-spacing:1px;">' + s.name + ' <span style="color:#444; font-size:11px; font-weight:400;">(' + s.date + ')</span></h4>';
+        html += '<h4 style="color:var(--accent-gold); margin:0; font-family:Orbitron,sans-serif; font-size:13px; letter-spacing:1px;">' + s.name + ' <span style="color:#444; font-size:11px; font-weight:400;">(' + s.date + ')</span></h4>';
         html += '<span class="tag">$' + s.totalLoaned.toFixed(2) + ' PRESTADO</span>';
         html += '</div>';
-        html += '<table style="width:100%; border-collapse:collapse; font-size:14px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:8px;">Jugador</th><th style="text-align:left; padding:8px;">Recargas</th><th style="text-align:left; padding:8px;">Total prestado</th><th style="text-align:left; padding:8px;">Fichas finales</th><th style="text-align:left; padding:8px;">Neto</th></tr></thead><tbody>';
+        html += '<table style="width:100%; border-collapse:collapse; font-size:14px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:Orbitron,sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:8px;">Jugador</th><th style="text-align:left; padding:8px;">Recargas</th><th style="text-align:left; padding:8px;">Total prestado</th><th style="text-align:left; padding:8px;">Fichas finales</th><th style="text-align:left; padding:8px;">Neto</th></tr></thead><tbody>';
         s.results.forEach(function(r) {
           var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
           var sign = r.net > 0 ? '+' : '';
@@ -833,7 +835,7 @@
         });
         html += '</tbody></table>';
         if (Math.abs(s.bankDiff) >= 0.01) {
-          html += '<div style="margin-top:10px; font-size:12px; color:#ff4444; font-family:'Orbitron',sans-serif;">⚠ DIFERENCIA EN BANCO: $' + s.bankDiff.toFixed(2) + '</div>';
+          html += '<div style="margin-top:10px; font-size:12px; color:#ff4444; font-family:Orbitron,sans-serif;">⚠ DIFERENCIA EN BANCO: $' + s.bankDiff.toFixed(2) + '</div>';
         }
         html += '</div>';
       });

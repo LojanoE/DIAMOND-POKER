@@ -66,11 +66,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.1.1** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.1.2** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.1.1';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.1.1">` en el `<head>`.
-3. El parámetro `?v=1.1.1` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.1.2';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.1.2">` en el `<head>`.
+3. El parámetro `?v=1.1.2` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
