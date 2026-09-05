@@ -14,7 +14,8 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
 
 ## Arquitectura y stack tecnológico
 
-- **Un solo archivo HTML autocontenido**: `index.html` (~870 líneas) contiene HTML, CSS (dentro de `<style>`) y JavaScript (dentro de `<script>`). No hay carpetas ni módulos.
+- **Un solo archivo HTML autocontenido**: `index.html` (~950 líneas) contiene HTML, CSS (dentro de `<style>`) y JavaScript (dentro de `<script>`). No hay carpetas ni módulos.
+- **Íconos/PWA**: `manifest.json` + `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (diamante ♦ generado con `gen_icon.py`, script Python/PIL) permiten "Agregar a pantalla de inicio" con ícono propio.
 - **Sin dependencias de build, sin frameworks, sin npm/pip/cargo**: no existe `package.json`, `pyproject.toml` ni ningún archivo de configuración de build. El único archivo de configuración del repo es `.gitattributes` (normalización LF).
 - **Dependencia externa única**: fuentes de Google Fonts (`Orbitron` y `Rajdhani`) cargadas por CDN. Requiere internet solo para las fuentes; la app funciona sin ellas (degrada tipografía).
 - **Persistencia**: `localStorage` del navegador, bajo la clave `poker_homegame`. Estructura de datos:
@@ -67,11 +68,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.0** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.1** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.2.0';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.2.0">` en el `<head>`.
-3. El parámetro `?v=1.2.0` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.2.1';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.2.1">` en el `<head>`.
+3. El parámetro `?v=1.2.1` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
