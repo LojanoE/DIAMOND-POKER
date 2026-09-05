@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Control de caché: forzar al navegador a revalidar siempre el archivo -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="version" content="1.1.0">
+  <title>DIAMOND CLUB — Poker Tracker</title>
+  <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.1.0" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-card: #0a0a0a;
+      --bg-input: #111111;
+      --border: #2a1a1a;
+      --border-glow: #ff3b3b;
+      --accent-red: #ff2a2a;
+      --accent-orange: #ff6b00;
+      --accent-gold: #ffaa00;
+      --accent-green: #00ff88;
+      --text: #e8e8e8;
+      --text-dim: #888888;
+      --glow-red: 0 0 12px rgba(255, 43, 43, 0.4), 0 0 30px rgba(255, 43, 43, 0.15);
+      --glow-orange: 0 0 12px rgba(255, 107, 0, 0.4), 0 0 30px rgba(255, 107, 0, 0.15);
+      --glow-gold: 0 0 12px rgba(255, 170, 0, 0.4), 0 0 30px rgba(255, 170, 0, 0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255, 43, 43, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 107, 0, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 170, 0, 0.03) 0%, transparent 60%);
+    }
+    .container { padding: 20px; max-width: 1000px; margin: 0 auto; }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 24px 0;
+      position: relative;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-red), var(--accent-orange), var(--accent-gold), var(--accent-orange), var(--accent-red), transparent);
+      box-shadow: 0 0 15px rgba(255, 43, 43, 0.6);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.4), transparent);
+    }
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff 0%, var(--accent-gold) 40%, var(--accent-orange) 70%, var(--accent-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 40px rgba(255, 107, 0, 0.3);
+      margin: 0;
+    }
+    .header p {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    .version-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 2px 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--accent-gold);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+    }
+    .diamond-icon {
+      display: inline-block;
+      width: 12px; height: 12px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+      transform: rotate(45deg);
+      margin: 0 12px;
+      box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+      vertical-align: middle;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-gold), var(--accent-orange), var(--accent-red));
+      opacity: 0.6;
+    }
+    .card:hover {
+      border-color: rgba(255, 107, 0, 0.3);
+      box-shadow: 0 0 20px rgba(255, 43, 43, 0.08);
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin: 0 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px; height: 16px;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-orange));
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(255, 43, 43, 0.5);
+    }
+
+    /* FORMS */
+    .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .form input, .form select {
+      background: var(--bg-input);
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form input:focus, .form select:focus {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 12px rgba(255, 107, 0, 0.2);
+    }
+    .form input::placeholder { color: #444; font-weight: 400; }
+
+    /* BUTTONS */
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.5s;
+    }
+    .btn:hover::after { left: 100%; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+      color: #fff;
+      box-shadow: var(--glow-red);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(255, 43, 43, 0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #333;
+      color: var(--text-dim);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+      box-shadow: 0 0 15px rgba(255, 107, 0, 0.15);
+    }
+    .btn-danger {
+      background: transparent;
+      border: 1px solid #331111;
+      color: #ff4444;
+    }
+    .btn-danger:hover {
+      border-color: #ff4444;
+      background: rgba(255, 68, 68, 0.08);
+      box-shadow: 0 0 15px rgba(255, 68, 68, 0.2);
+    }
+    .btn-small { padding: 8px 14px; font-size: 10px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; font-family: 'Rajdhani', sans-serif; }
+    th {
+      text-align: left;
+      padding: 12px 14px;
+      color: var(--accent-orange);
+      border-bottom: 1px solid #2a1a1a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    td { padding: 12px 14px; border-bottom: 1px solid #151515; font-weight: 500; }
+    tr:hover td { background: rgba(255, 107, 0, 0.03); }
+    .positive { color: var(--accent-green); text-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
+    .negative { color: #ff4444; text-shadow: 0 0 8px rgba(255, 68, 68, 0.3); }
+    .neutral { color: #888; }
+
+    /* TAGS & CHIPS */
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: rgba(255, 107, 0, 0.1);
+      border: 1px solid rgba(255, 107, 0, 0.2);
+      color: var(--accent-orange);
+    }
+    .player-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #111, #1a0a0a);
+      border: 1px solid #2a1a1a;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 4px;
+      transition: all 0.3s;
+    }
+    .player-chip:hover {
+      border-color: rgba(255, 107, 0, 0.4);
+      box-shadow: 0 0 12px rgba(255, 107, 0, 0.1);
+    }
+    .player-chip .x {
+      cursor: pointer;
+      color: #ff4444;
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.2s;
+    }
+    .player-chip .x:hover { transform: scale(1.2); }
+
+    /* SETTLE CARDS */
+    .settle-card {
+      background: linear-gradient(135deg, #0a0a0a, #110a0a);
+      border: 1px solid #2a1a1a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .settle-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-orange));
+    }
+    .settle-card strong { color: var(--accent-gold); font-family: 'Orbitron', sans-serif; }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #444;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 2px;
+    }
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: #555;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .tab:hover { color: var(--accent-orange); }
+    .tab.active {
+      color: var(--accent-gold);
+      border-bottom-color: var(--accent-orange);
+      text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* PLAYER BLOCKS (recargas) */
+    .player-block {
+      background: linear-gradient(135deg, #0a0a0a, #0f0808);
+      border: 1px solid #1a1111;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .player-block:hover {
+      border-color: rgba(255, 107, 0, 0.2);
+    }
+    .player-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.3), transparent);
+    }
+    .player-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .player-block-name {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+    }
+    .player-block-total {
+      font-size: 12px;
+      color: #666;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .reload-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .reload-tag {
+      background: linear-gradient(135deg, rgba(255,43,43,0.15), rgba(255,107,0,0.1));
+      border: 1px solid rgba(255, 107, 0, 0.25);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .reload-tag .del {
+      cursor: pointer;
+      color: #ff4444;
+      font-weight: 900;
+      font-size: 14px;
+      transition: transform 0.2s;
+    }
+    .reload-tag .del:hover { transform: scale(1.3); }
+    .reload-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+    .mini-input {
+      width: 100px;
+      background: var(--bg-input);
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .mini-input:focus {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 10px rgba(255, 107, 0, 0.15);
+    }
+
+    /* BALANCE BOXES */
+    .balance-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .balance-item {
+      background: linear-gradient(135deg, #0a0a0a, #0f0808);
+      border: 1px solid #1a1111;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .balance-item:hover {
+      border-color: rgba(255, 107, 0, 0.2);
+      transform: translateY(-2px);
+    }
+    .balance-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .balance-item.won::before { background: linear-gradient(90deg, transparent, var(--accent-green), transparent); }
+    .balance-item.owed::before { background: linear-gradient(90deg, transparent, #ff4444, transparent); }
+    .balance-item.even::before { background: linear-gradient(90deg, transparent, #555, transparent); }
+    .balance-name {
+      font-size: 11px;
+      color: #555;
+      margin-bottom: 6px;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .balance-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .won { color: var(--accent-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+    .owed { color: #ff4444; text-shadow: 0 0 10px rgba(255, 68, 68, 0.3); }
+    .even { color: #666; }
+
+    /* BANK CHECK */
+    .bank-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .bank-stat-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    .bank-stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #2a1a1a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .header h1 { font-size: 22px; letter-spacing: 2px; }
+      .tabs { overflow-x: auto; }
+      .tab { padding: 10px 14px; font-size: 10px; white-space: nowrap; }
+      .balance-box { grid-template-columns: 1fr 1fr; }
+      .bank-grid { grid-template-columns: 1fr; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="diamond-icon"></span>DIAMOND CLUB<span class="diamond-icon"></span></h1>
+      <p>Home Game Tracker · Cash Games & Fast Forward</p>
+      <span class="version-badge" id="versionBadge"></span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('players')" id="tab-players">👥 Jugadores</div>
+      <div class="tab" onclick="switchTab('sessions')" id="tab-sessions">🎲 Sesiones</div>
+      <div class="tab" onclick="switchTab('history')" id="tab-history">📜 Historial</div>
+    </div>
+
+    <!-- TAB JUGADORES -->
+    <div class="tab-content active" id="content-players">
+      <div class="card">
+        <h3 class="section-title">Agregar Jugador</h3>
+        <div class="form" style="grid-template-columns: 1fr auto;">
+          <input type="text" id="newPlayerName" placeholder="Nombre del jugador" />
+          <button class="btn btn-primary" onclick="addPlayer()">Agregar</button>
+        </div>
+        <div id="playersList" style="margin-top: 14px;"></div>
+      </div>
+      <div class="card" id="playerBalancesCard" style="display:none;">
+        <h3 class="section-title">Balance Global</h3>
+        <div class="balance-box" id="playerBalances"></div>
+      </div>
+    </div>
+
+    <!-- TAB SESIONES -->
+    <div class="tab-content" id="content-sessions">
+      <div class="card">
+        <h3 class="section-title">Nueva Sesión</h3>
+        <div class="form">
+          <input type="date" id="sessDate" />
+          <input type="text" id="sessName" placeholder="Nombre de la sesión (ej: Viernes 20)" />
+          <input type="number" id="sessDefaultBuyin" placeholder="Recarga por defecto ($)" step="0.01" value="5" />
+        </div>
+        <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:'Orbitron',sans-serif; letter-spacing:1px;">
+          Ingresa las <strong style="color:var(--accent-orange);">recargas</strong> del banco y las <strong style="color:var(--accent-gold);">fichas finales</strong> de cada jugador.
+        </div>
+        <div id="sessPlayersArea"></div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="saveSession()">Guardar Sesión & Calcular</button>
+        </div>
+      </div>
+
+      <div class="card" id="settleCard" style="display:none;">
+        <h3 class="section-title">Liquidación</h3>
+        <div id="settleResults"></div>
+      </div>
+
+      <div class="card" id="bankCheckCard" style="display:none;">
+        <h3 class="section-title">Verificación del Banco</h3>
+        <div id="bankCheckResult"></div>
+      </div>
+    </div>
+
+    <!-- TAB HISTORIAL -->
+    <div class="tab-content" id="content-history">
+      <div class="card">
+        <h3 class="section-title">Historial de Sesiones</h3>
+        <div id="historyList"></div>
+      </div>
+      <div class="actions" style="margin-bottom: 16px;">
+        <button class="btn btn-outline" onclick="exportData()">Exportar JSON</button>
+        <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
+        <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importData(this)" />
+        <button class="btn btn-danger" onclick="clearAll()">Borrar Todo</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== VERSIÓN ==========
+    // Única fuente de verdad de la versión. Al hacer cualquier cambio en la app,
+    // incrementar APP_VERSION y actualizar también:
+    //   1. <meta name="version"> en el <head>
+    //   2. el parámetro ?v= del link de Google Fonts
+    var APP_VERSION = '1.1.0';
+    document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
+
+    var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
+    document.getElementById('sessDate').valueAsDate = new Date();
+    var sessionDraft = {};
+
+    function save() { localStorage.setItem('poker_homegame', JSON.stringify(data)); }
+
+    function switchTab(tab) {
+      var tabs = document.querySelectorAll('.tab');
+      for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+      var contents = document.querySelectorAll('.tab-content');
+      for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.getElementById('content-' + tab).classList.add('active');
+      if (tab === 'players') renderPlayers();
+      if (tab === 'history') renderHistory();
+      if (tab === 'sessions') renderSessionForm();
+    }
+
+    // ========== JUGADORES ==========
+    function addPlayer() {
+      var name = document.getElementById('newPlayerName').value.trim();
+      if (!name) return alert('Ingresa un nombre');
+      if (data.players.indexOf(name) !== -1) return alert('Ese jugador ya existe');
+      data.players.push(name);
+      save();
+      document.getElementById('newPlayerName').value = '';
+      renderPlayers();
+      renderSessionForm();
+    }
+    function removePlayer(name) {
+      if (!confirm('¿Eliminar a ' + name + '?')) return;
+      data.players = data.players.filter(function(p) { return p !== name; });
+      save();
+      renderPlayers();
+      renderSessionForm();
+    }
+    function renderPlayers() {
+      var el = document.getElementById('playersList');
+      if (data.players.length === 0) { el.innerHTML = '<div class="empty">No hay jugadores registrados</div>'; }
+      else {
+        el.innerHTML = data.players.map(function(p) {
+          return '<span class="player-chip">' + p + '<span class="x" onclick="removePlayer('' + p + '')">×</span></span>';
+        }).join('');
+      }
+      var balances = {};
+      data.players.forEach(function(p) { balances[p] = 0; });
+      data.sessions.forEach(function(s) {
+        s.results.forEach(function(r) { balances[r.player] = (balances[r.player] || 0) + r.net; });
+      });
+      var box = document.getElementById('playerBalances');
+      var card = document.getElementById('playerBalancesCard');
+      if (data.sessions.length > 0) {
+        card.style.display = 'block';
+        box.innerHTML = Object.keys(balances).map(function(p) {
+          var bal = balances[p];
+          var cls = bal > 0 ? 'won' : bal < 0 ? 'owed' : 'even';
+          var sign = bal > 0 ? '+' : '';
+          return '<div class="balance-item ' + cls + '"><div class="balance-name">' + p + '</div><div class="balance-val ' + cls + '">' + sign + '$' + bal.toFixed(2) + '</div></div>';
+        }).join('');
+      } else { card.style.display = 'none'; }
+    }
+
+    // ========== SESIONES ==========
+    function getDraft(player) {
+      if (!sessionDraft[player]) sessionDraft[player] = { reloads: [], final: 0 };
+      return sessionDraft[player];
+    }
+    function addReload(player) {
+      var draft = getDraft(player);
+      var defaultVal = parseFloat(document.getElementById('sessDefaultBuyin').value) || 5;
+      draft.reloads.push(defaultVal);
+      renderSessionForm();
+    }
+    function removeReload(player, idx) {
+      var draft = getDraft(player);
+      draft.reloads.splice(idx, 1);
+      renderSessionForm();
+    }
+    function updateFinal(player, val) {
+      var draft = getDraft(player);
+      draft.final = parseFloat(val) || 0;
+    }
+    function renderSessionForm() {
+      var area = document.getElementById('sessPlayersArea');
+      if (data.players.length === 0) {
+        area.innerHTML = '<div class="empty">Primero agrega jugadores en la pestaña Jugadores</div>';
+        return;
+      }
+      var html = '';
+      data.players.forEach(function(p) {
+        var draft = getDraft(p);
+        var totalLoan = draft.reloads.reduce(function(a, b) { return a + b; }, 0);
+        var safeId = p.replace(/\s/g, '_');
+        html += '<div class="player-block">';
+        html += '<div class="player-block-header">';
+        html += '<span class="player-block-name">' + p + '</span>';
+        html += '<span class="player-block-total">TOTAL PRESTADO: <strong style="color:var(--accent-gold);">$' + totalLoan.toFixed(2) + '</strong></span>';
+        html += '</div>';
+        html += '<div style="font-size:11px; color:#444; font-family:'Orbitron',sans-serif; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">Recargas del banco</div>';
+        html += '<div class="reload-list">';
+        draft.reloads.forEach(function(amt, idx) {
+          html += '<span class="reload-tag">$' + amt.toFixed(2) + '<span class="del" onclick="removeReload('' + p + '',' + idx + ')">×</span></span>';
+        });
+        if (draft.reloads.length === 0) html += '<span style="font-size:12px; color:#333;">Sin recargas</span>';
+        html += '</div>';
+        html += '<div class="reload-row">';
+        html += '<button class="btn btn-outline btn-small" onclick="addReload('' + p + '')">➕ Recarga $' + (document.getElementById('sessDefaultBuyin').value || 5) + '</button>';
+        html += '<input type="number" class="mini-input" style="width:110px;" placeholder="Otro monto" id="customReload_' + safeId + '" step="0.01" />';
+        html += '<button class="btn btn-outline btn-small" onclick="addCustomReload('' + p + '')">Agregar</button>';
+        html += '</div>';
+        html += '<div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">';
+        html += '<span style="font-size:12px; color:#555; font-family:'Orbitron',sans-serif; letter-spacing:1px; text-transform:uppercase;">Fichas finales</span>';
+        html += '<input type="number" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" step="0.01" value="' + (draft.final || '') + '" onchange="updateFinal('' + p + '', this.value)" />';
+        html += '</div>';
+        html += '</div>';
+      });
+      area.innerHTML = html;
+    }
+    function addCustomReload(player) {
+      var safeId = player.replace(/\s/g, '_');
+      var val = parseFloat(document.getElementById('customReload_' + safeId).value);
+      if (!val || val <= 0) return alert('Ingresa un monto válido');
+      var draft = getDraft(player);
+      draft.reloads.push(val);
+      document.getElementById('customReload_' + safeId).value = '';
+      renderSessionForm();
+    }
+
+    function saveSession() {
+      var date = document.getElementById('sessDate').value;
+      var name = document.getElementById('sessName').value.trim() || 'Sesión';
+      if (!date) return alert('Ingresa una fecha');
+      if (data.players.length === 0) return alert('Agrega jugadores primero');
+
+      var results = [];
+      var totalLoaned = 0;
+      var totalFinal = 0;
+
+      data.players.forEach(function(p) {
+        var draft = getDraft(p);
+        var totalBuyin = draft.reloads.reduce(function(a, b) { return a + b; }, 0);
+        var final = draft.final || 0;
+        var net = final - totalBuyin;
+        results.push({ player: p, reloads: draft.reloads.slice(), totalLoaned: totalBuyin, final: final, net: net });
+        totalLoaned += totalBuyin;
+        totalFinal += final;
+      });
+
+      var diff = totalFinal - totalLoaned;
+      var session = { id: Date.now(), date: date, name: name, results: results, totalLoaned: totalLoaned, totalFinal: totalFinal, bankDiff: diff };
+      data.sessions.push(session);
+      save();
+
+      showSettle(results);
+      showBankCheck(totalLoaned, totalFinal, diff);
+
+      sessionDraft = {};
+      document.getElementById('sessName').value = '';
+      renderSessionForm();
+    }
+
+    function showSettle(results) {
+      var card = document.getElementById('settleCard');
+      var el = document.getElementById('settleResults');
+      card.style.display = 'block';
+
+      var debtors = results.filter(function(r) { return r.net < 0; }).map(function(r) { return { player: r.player, amount: Math.abs(r.net) }; });
+      var creditors = results.filter(function(r) { return r.net > 0; }).map(function(r) { return { player: r.player, amount: r.net }; });
+
+      var transactions = [];
+      var d = 0, c = 0;
+      while (d < debtors.length && c < creditors.length) {
+        var pay = Math.min(debtors[d].amount, creditors[c].amount);
+        transactions.push({ from: debtors[d].player, to: creditors[c].player, amount: pay });
+        debtors[d].amount -= pay;
+        creditors[c].amount -= pay;
+        if (debtors[d].amount < 0.01) d++;
+        if (creditors[c].amount < 0.01) c++;
+      }
+
+      var html = '<div style="margin-bottom:14px; font-size:12px; color:#555; font-family:'Orbitron',sans-serif; letter-spacing:1px;">NETO = Fichas finales − Total prestado</div>';
+      html += '<table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:10px;">Jugador</th><th style="text-align:left; padding:10px;">Recargas</th><th style="text-align:left; padding:10px;">Total prestado</th><th style="text-align:left; padding:10px;">Fichas finales</th><th style="text-align:left; padding:10px;">Neto</th></tr></thead><tbody>';
+      results.forEach(function(r) {
+        var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
+        var sign = r.net > 0 ? '+' : '';
+        var reloadsText = r.reloads.map(function(x) { return '$' + x.toFixed(2); }).join(' + ');
+        html += '<tr style="border-bottom:1px solid #151515;"><td style="padding:10px;"><strong>' + r.player + '</strong></td><td style="padding:10px; font-size:12px;">' + reloadsText + '</td><td style="padding:10px;">$' + r.totalLoaned.toFixed(2) + '</td><td style="padding:10px;">$' + r.final.toFixed(2) + '</td><td style="padding:10px;" class="' + netClass + '">' + sign + '$' + r.net.toFixed(2) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+
+      if (transactions.length === 0) {
+        html += '<div style="text-align:center; padding:18px; color:var(--accent-green); font-family:'Orbitron',sans-serif; font-size:12px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ TODOS QUEDARON A MANO</div>';
+      } else {
+        html += '<h4 style="color:var(--accent-gold); margin-bottom:12px; font-family:'Orbitron',sans-serif; font-size:12px; letter-spacing:2px;">TRANSFERENCIAS</h4>';
+        transactions.forEach(function(t) {
+          html += '<div class="settle-card"><span style="color:#ff4444; font-weight:700;">' + t.from + '</span> <span style="color:#444;">→</span> <span style="color:var(--accent-gold); font-weight:700;">' + t.to + '</span> <span style="color:var(--accent-green); font-weight:700; margin-left:8px;">$' + t.amount.toFixed(2) + '</span></div>';
+        });
+      }
+      el.innerHTML = html;
+    }
+
+    function showBankCheck(totalLoaned, totalFinal, diff) {
+      var card = document.getElementById('bankCheckCard');
+      var el = document.getElementById('bankCheckResult');
+      card.style.display = 'block';
+      var color = Math.abs(diff) < 0.01 ? 'var(--accent-green)' : '#ff4444';
+      var html = '<div class="bank-grid">';
+      html += '<div><div class="bank-stat-label">Total Prestado</div><div class="bank-stat-value" style="color:var(--accent-orange);">$' + totalLoaned.toFixed(2) + '</div></div>';
+      html += '<div><div class="bank-stat-label">Fichas en Mesa</div><div class="bank-stat-value" style="color:var(--accent-gold);">$' + totalFinal.toFixed(2) + '</div></div>';
+      html += '<div><div class="bank-stat-label">Diferencia</div><div class="bank-stat-value" style="color:' + color + ';">$' + diff.toFixed(2) + '</div></div>';
+      html += '</div>';
+      if (Math.abs(diff) < 0.01) {
+        html += '<div style="text-align:center; color:var(--accent-green); font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ CUENTAS DEL BANCO CUADRAN</div>';
+      } else if (diff > 0) {
+        html += '<div style="text-align:center; color:#ff4444; font-size:13px;">⚠ Hay <strong>$' + diff.toFixed(2) + '</strong> de más en fichas</div>';
+      } else {
+        html += '<div style="text-align:center; color:#ff4444; font-size:13px;">⚠ Faltan <strong>$' + Math.abs(diff).toFixed(2) + '</strong> en fichas</div>';
+      }
+      el.innerHTML = html;
+    }
+
+    // ========== HISTORIAL ==========
+    function renderHistory() {
+      var el = document.getElementById('historyList');
+      if (data.sessions.length === 0) { el.innerHTML = '<div class="empty">No hay sesiones registradas</div>'; return; }
+      var html = '';
+      var reversed = data.sessions.slice().reverse();
+      reversed.forEach(function(s) {
+        html += '<div class="card" style="margin-bottom:14px;">';
+        html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">';
+        html += '<h4 style="color:var(--accent-gold); margin:0; font-family:'Orbitron',sans-serif; font-size:13px; letter-spacing:1px;">' + s.name + ' <span style="color:#444; font-size:11px; font-weight:400;">(' + s.date + ')</span></h4>';
+        html += '<span class="tag">$' + s.totalLoaned.toFixed(2) + ' PRESTADO</span>';
+        html += '</div>';
+        html += '<table style="width:100%; border-collapse:collapse; font-size:14px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:8px;">Jugador</th><th style="text-align:left; padding:8px;">Recargas</th><th style="text-align:left; padding:8px;">Total prestado</th><th style="text-align:left; padding:8px;">Fichas finales</th><th style="text-align:left; padding:8px;">Neto</th></tr></thead><tbody>';
+        s.results.forEach(function(r) {
+          var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
+          var sign = r.net > 0 ? '+' : '';
+          var reloadsText = r.reloads.map(function(x) { return '$' + x.toFixed(2); }).join(' + ');
+          html += '<tr style="border-bottom:1px solid #151515;"><td style="padding:8px;">' + r.player + '</td><td style="padding:8px; font-size:12px;">' + reloadsText + '</td><td style="padding:8px;">$' + r.totalLoaned.toFixed(2) + '</td><td style="padding:8px;">$' + r.final.toFixed(2) + '</td><td style="padding:8px;" class="' + netClass + '">' + sign + '$' + r.net.toFixed(2) + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        if (Math.abs(s.bankDiff) >= 0.01) {
+          html += '<div style="margin-top:10px; font-size:12px; color:#ff4444; font-family:'Orbitron',sans-serif;">⚠ DIFERENCIA EN BANCO: $' + s.bankDiff.toFixed(2) + '</div>';
+        }
+        html += '</div>';
+      });
+      el.innerHTML = html;
+    }
+
+    function exportData() {
+      var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'diamondclub_' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    function importData(input) {
+      var file = input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var imported = JSON.parse(e.target.result);
+          if (imported.players && imported.sessions) {
+            data = imported;
+            save();
+            renderPlayers(); renderHistory(); renderSessionForm();
+            alert('Datos importados correctamente');
+          } else { alert('Formato incorrecto'); }
+        } catch(err) { alert('Error: ' + err.message); }
+        input.value = '';
+      };
+      reader.readAsText(file);
+    }
+    function clearAll() {
+      if (!confirm('¿Borrar TODOS los datos? Esto no se puede deshacer.')) return;
+      data = {players: [], sessions: []};
+      sessionDraft = {};
+      save();
+      renderPlayers(); renderHistory(); renderSessionForm();
+      document.getElementById('settleCard').style.display = 'none';
+      document.getElementById('bankCheckCard').style.display = 'none';
+    }
+
+    // Init
+    renderPlayers();
+    renderSessionForm();
+  </script>
+</body>
+</html>
