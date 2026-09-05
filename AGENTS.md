@@ -40,6 +40,7 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
   - `VERSIÓN`: constante `APP_VERSION` (única fuente de verdad de la versión, ver sección de versionado).
   - Estado global: `data` (cargado de localStorage) y `sessionDraft` (borrador de la sesión en curso, en memoria).
   - `save()` centraliza la persistencia.
+  - `parseNum(val)` convierte entrada numérica aceptando punto O coma como separador decimal. TODOS los campos numéricos usan `type="text" inputmode="decimal"` (teclado numérico en móviles) y deben parsearse con `parseNum`, nunca con `parseFloat` directo.
   - `JUGADORES`: `addPlayer`, `removePlayer`, `renderPlayers` (incluye cálculo de balance global).
   - `SESIONES`: `getDraft`, `addReload`, `addCustomReload`, `removeReload`, `updateFinal`, `renderSessionForm`, `saveSession`, `showSettle`, `showBankCheck`.
   - `HISTORIAL`: `renderHistory`, `editSession` (carga una sesión en el formulario, activa `editingSessionId`), `cancelEdit`, `exportData`, `importData`, `clearAll`.
@@ -102,11 +103,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.1** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.2** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.2.1';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.2.1">` en el `<head>`.
-3. El parámetro `?v=1.2.1` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.2.2';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.2.2">` en el `<head>`.
+3. El parámetro `?v=1.2.2` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
@@ -132,3 +133,4 @@ Repositorio git. `.gitattributes` fuerza normalización de fin de línea LF (`* 
 - **1.1.2** — Fix crítico: comillas sin escapar en `onclick` y `font-family:'Orbitron'` dentro de strings JS rompían todo el `<script>` (SyntaxError).
 - **1.2.0** — Edición de sesiones guardadas desde el historial (`editSession`/`cancelEdit`, `editingSessionId`); al guardar se actualiza la sesión y se recalcula la liquidación.
 - **1.2.1** — Ícono de poker (diamante ♦) para pantalla de inicio: `manifest.json` + íconos PNG + favicon real.
+- **1.2.2** — Entrada numérica móvil: campos con `inputmode="decimal"` (teclado numérico en Android/iPhone) y `parseNum` que acepta punto o coma como separador decimal indistintamente.

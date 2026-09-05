@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta name="version" content="1.2.1">
+  <meta name="version" content="1.2.2">
   <!-- Íconos de la app (pantalla de inicio / marcadores) -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#050505">
@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <title>DIAMOND CLUB — Poker Tracker</title>
   <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.2.1" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.2.2" rel="stylesheet">
   <style>
     :root {
       --bg: #050505;
@@ -551,7 +551,7 @@
         <div class="form">
           <input type="date" id="sessDate" />
           <input type="text" id="sessName" placeholder="Nombre de la sesión (ej: Viernes 20)" />
-          <input type="number" id="sessDefaultBuyin" placeholder="Recarga por defecto ($)" step="0.01" value="5" />
+          <input type="text" inputmode="decimal" id="sessDefaultBuyin" placeholder="Recarga por defecto ($)" value="5" />
         </div>
         <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:Orbitron,sans-serif; letter-spacing:1px;">
           Ingresa las <strong style="color:var(--accent-orange);">recargas</strong> del banco y las <strong style="color:var(--accent-gold);">fichas finales</strong> de cada jugador.
@@ -598,7 +598,7 @@
     // incrementar APP_VERSION y actualizar también:
     //   1. <meta name="version"> en el <head>
     //   2. el parámetro ?v= del link de Google Fonts
-    var APP_VERSION = '1.2.1';
+    var APP_VERSION = '1.2.2';
     document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
 
     var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
@@ -608,6 +608,12 @@
     var editingSessionId = null;
 
     function save() { localStorage.setItem('poker_homegame', JSON.stringify(data)); }
+
+    // Convierte entrada numérica a número aceptando punto O coma como decimal (12.5 = 12,5)
+    function parseNum(val) {
+      var n = parseFloat(String(val).trim().replace(',', '.'));
+      return isNaN(n) ? 0 : n;
+    }
 
     function switchTab(tab) {
       var tabs = document.querySelectorAll('.tab');
@@ -672,7 +678,7 @@
     }
     function addReload(player) {
       var draft = getDraft(player);
-      var defaultVal = parseFloat(document.getElementById('sessDefaultBuyin').value) || 5;
+      var defaultVal = parseNum(document.getElementById('sessDefaultBuyin').value) || 5;
       draft.reloads.push(defaultVal);
       renderSessionForm();
     }
@@ -683,7 +689,7 @@
     }
     function updateFinal(player, val) {
       var draft = getDraft(player);
-      draft.final = parseFloat(val) || 0;
+      draft.final = parseNum(val);
     }
     function renderSessionForm() {
       // Actualizar banner y botón según el modo (nueva sesión o edición)
@@ -719,13 +725,13 @@
         if (draft.reloads.length === 0) html += '<span style="font-size:12px; color:#333;">Sin recargas</span>';
         html += '</div>';
         html += '<div class="reload-row">';
-        html += '<button class="btn btn-outline btn-small" onclick="addReload(\'' + p + '\')">➕ Recarga $' + (document.getElementById('sessDefaultBuyin').value || 5) + '</button>';
-        html += '<input type="number" class="mini-input" style="width:110px;" placeholder="Otro monto" id="customReload_' + safeId + '" step="0.01" />';
+        html += '<button class="btn btn-outline btn-small" onclick="addReload(\'' + p + '\')">➕ Recarga $' + (parseNum(document.getElementById('sessDefaultBuyin').value) || 5) + '</button>';
+        html += '<input type="text" inputmode="decimal" class="mini-input" style="width:110px;" placeholder="Otro monto" id="customReload_' + safeId + '" />';
         html += '<button class="btn btn-outline btn-small" onclick="addCustomReload(\'' + p + '\')">Agregar</button>';
         html += '</div>';
         html += '<div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">';
         html += '<span style="font-size:12px; color:#555; font-family:Orbitron,sans-serif; letter-spacing:1px; text-transform:uppercase;">Fichas finales</span>';
-        html += '<input type="number" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" step="0.01" value="' + (draft.final || '') + '" onchange="updateFinal(\'' + p + '\', this.value)" />';
+        html += '<input type="text" inputmode="decimal" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" value="' + (draft.final || '') + '" onchange="updateFinal(\'' + p + '\', this.value)" />';
         html += '</div>';
         html += '</div>';
       });
@@ -733,7 +739,7 @@
     }
     function addCustomReload(player) {
       var safeId = player.replace(/\s/g, '_');
-      var val = parseFloat(document.getElementById('customReload_' + safeId).value);
+      var val = parseNum(document.getElementById('customReload_' + safeId).value);
       if (!val || val <= 0) return alert('Ingresa un monto válido');
       var draft = getDraft(player);
       draft.reloads.push(val);
