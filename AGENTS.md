@@ -45,12 +45,46 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
   - `HISTORIAL`: `renderHistory`, `editSession` (carga una sesión en el formulario, activa `editingSessionId`), `cancelEdit`, `exportData`, `importData`, `clearAll`.
   - Edición de sesiones: la variable global `editingSessionId` (null = nueva sesión) indica qué sesión se está editando; `saveSession` actualiza en lugar de crear cuando está definido.
 
+## Archivos del repositorio
+
+| Archivo | Propósito |
+|---|---|
+| `index.html` | La app completa (HTML + CSS + JS). Único archivo de la aplicación. |
+| `manifest.json` | Manifiesto PWA (nombre, colores, íconos) para "Agregar a pantalla de inicio". |
+| `icon-192.png` | Ícono 192×192 (Android/Chrome). |
+| `icon-512.png` | Ícono 512×512 (Android/Chrome, `any maskable`). |
+| `apple-touch-icon.png` | Ícono 180×180 (iPhone/iPad, Safari). |
+| `gen_icon.py` | Script Python (PIL) que genera los 3 íconos PNG (diamante ♦ con glow rojo→naranja→dorado y anillo de ficha dorado). |
+| `AGENTS.md` | Este archivo: documentación completa del proyecto. |
+| `.gitattributes` | Normalización de fin de línea LF (`* text=auto`). |
+
+### Regenerar los íconos
+
+```bash
+python gen_icon.py   # requiere Pillow (pip install Pillow)
+```
+
+Genera `icon-512.png`, `icon-192.png` y `apple-touch-icon.png` en la raíz. Colores del tema definidos arriba del script (`RED`, `ORANGE`, `GOLD`).
+
+### Instalar como app (usuario final)
+
+- **Android (Chrome)**: abrir la URL → menú ⋮ → "Agregar a pantalla de inicio".
+- **iPhone (Safari)**: botón Compartir → "Agregar a pantalla de inicio".
+- La app se abre en modo `standalone` (sin barra del navegador) con el ícono del diamante.
+
 ## Comandos de build y prueba
 
 No hay build, tests ni linter configurados. Flujo de trabajo:
 
 - **Ejecutar**: abrir `index.html` en un navegador o visitar `https://lojanoe.github.io/DIAMOND-POKER/`.
-- **Probar**: prueba manual en el navegador — agregar jugadores, registrar una sesión, verificar liquidación, exportar/importar JSON y recargar la página para confirmar persistencia en `localStorage`.
+- **Validar sintaxis JS** (antes de cada commit — errores de comillas han roto la app en el pasado):
+  ```powershell
+  $html = Get-Content index.html -Raw -Encoding UTF8
+  $m = [regex]::Match($html, '(?s)<script>(.*)</script>')
+  [System.IO.File]::WriteAllText("$env:TEMP\check_script.js", $m.Groups[1].Value, [System.Text.Encoding]::UTF8)
+  node --check "$env:TEMP\check_script.js"
+  ```
+- **Probar**: prueba manual en el navegador — agregar jugadores, registrar una sesión, verificar liquidación, editar una sesión desde el historial, exportar/importar JSON y recargar la página para confirmar persistencia en `localStorage`. Se puede automatizar con el CLI `agent-browser` (ojo: en PowerShell los refs `@eN` deben pasarse entre comillas `'@e1'` porque `@` es splatting).
 
 ## Convenciones de estilo
 
@@ -89,3 +123,12 @@ La app se despliega en **GitHub Pages** desde la rama `main` del repo `LojanoE/D
 ## Control de versiones (git)
 
 Repositorio git. `.gitattributes` fuerza normalización de fin de línea LF (`* text=auto`).
+
+## Changelog
+
+- **1.0.0** — Versión inicial: jugadores, sesiones, liquidación, verificación del banco, historial, exportar/importar JSON.
+- **1.1.0** — Control de versiones de la app y meta tags anti-caché; badge de versión en el header.
+- **1.1.1** — Renombrado a `index.html` para GitHub Pages; documentación de despliegue.
+- **1.1.2** — Fix crítico: comillas sin escapar en `onclick` y `font-family:'Orbitron'` dentro de strings JS rompían todo el `<script>` (SyntaxError).
+- **1.2.0** — Edición de sesiones guardadas desde el historial (`editSession`/`cancelEdit`, `editingSessionId`); al guardar se actualiza la sesión y se recalcula la liquidación.
+- **1.2.1** — Ícono de poker (diamante ♦) para pantalla de inicio: `manifest.json` + íconos PNG + favicon real.
