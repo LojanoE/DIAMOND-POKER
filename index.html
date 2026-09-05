@@ -7,12 +7,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta name="version" content="1.1.2">
+  <meta name="version" content="1.2.0">
   <!-- Favicon inline (💎) para evitar el 404 de favicon.ico -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💎</text></svg>">
   <title>DIAMOND CLUB — Poker Tracker</title>
   <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.1.2" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.2.0" rel="stylesheet">
   <style>
     :root {
       --bg: #050505;
@@ -552,9 +552,13 @@
         <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:Orbitron,sans-serif; letter-spacing:1px;">
           Ingresa las <strong style="color:var(--accent-orange);">recargas</strong> del banco y las <strong style="color:var(--accent-gold);">fichas finales</strong> de cada jugador.
         </div>
+        <div id="editBanner" style="display:none; margin-bottom:12px; padding:10px 14px; border:1px solid var(--accent-gold); border-radius:8px; background:rgba(255,170,0,0.08); font-family:Orbitron,sans-serif; font-size:11px; letter-spacing:1px; color:var(--accent-gold);">
+          ✏️ EDITANDO: <span id="editBannerName"></span>
+          <button class="btn btn-outline btn-small" style="margin-left:10px;" onclick="cancelEdit()">Cancelar</button>
+        </div>
         <div id="sessPlayersArea"></div>
         <div class="actions">
-          <button class="btn btn-primary" onclick="saveSession()">Guardar Sesión & Calcular</button>
+          <button class="btn btn-primary" id="saveSessionBtn" onclick="saveSession()">Guardar Sesión & Calcular</button>
         </div>
       </div>
 
@@ -590,12 +594,14 @@
     // incrementar APP_VERSION y actualizar también:
     //   1. <meta name="version"> en el <head>
     //   2. el parámetro ?v= del link de Google Fonts
-    var APP_VERSION = '1.1.2';
+    var APP_VERSION = '1.2.0';
     document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
 
     var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
     document.getElementById('sessDate').valueAsDate = new Date();
     var sessionDraft = {};
+    // ID de la sesión que se está editando (null = nueva sesión)
+    var editingSessionId = null;
 
     function save() { localStorage.setItem('poker_homegame', JSON.stringify(data)); }
 
@@ -676,6 +682,16 @@
       draft.final = parseFloat(val) || 0;
     }
     function renderSessionForm() {
+      // Actualizar banner y botón según el modo (nueva sesión o edición)
+      var banner = document.getElementById('editBanner');
+      var saveBtn = document.getElementById('saveSessionBtn');
+      if (editingSessionId) {
+        banner.style.display = 'block';
+        saveBtn.textContent = 'Actualizar Sesión & Recalcular';
+      } else {
+        banner.style.display = 'none';
+        saveBtn.textContent = 'Guardar Sesión & Calcular';
+      }
       var area = document.getElementById('sessPlayersArea');
       if (data.players.length === 0) {
         area.innerHTML = '<div class="empty">Primero agrega jugadores en la pestaña Jugadores</div>';
@@ -742,13 +758,24 @@
       });
 
       var diff = totalFinal - totalLoaned;
-      var session = { id: Date.now(), date: date, name: name, results: results, totalLoaned: totalLoaned, totalFinal: totalFinal, bankDiff: diff };
-      data.sessions.push(session);
+      if (editingSessionId) {
+        // Modo edición: actualizar la sesión existente conservando su id
+        for (var i = 0; i < data.sessions.length; i++) {
+          if (data.sessions[i].id === editingSessionId) {
+            data.sessions[i] = { id: editingSessionId, date: date, name: name, results: results, totalLoaned: totalLoaned, totalFinal: totalFinal, bankDiff: diff };
+            break;
+          }
+        }
+      } else {
+        var session = { id: Date.now(), date: date, name: name, results: results, totalLoaned: totalLoaned, totalFinal: totalFinal, bankDiff: diff };
+        data.sessions.push(session);
+      }
       save();
 
       showSettle(results);
       showBankCheck(totalLoaned, totalFinal, diff);
 
+      editingSessionId = null;
       sessionDraft = {};
       document.getElementById('sessName').value = '';
       renderSessionForm();
@@ -815,6 +842,33 @@
     }
 
     // ========== HISTORIAL ==========
+    // Cargar una sesión guardada en el formulario para corregirla
+    function editSession(id) {
+      var s = null;
+      for (var i = 0; i < data.sessions.length; i++) if (data.sessions[i].id === id) s = data.sessions[i];
+      if (!s) return;
+      editingSessionId = id;
+      sessionDraft = {};
+      s.results.forEach(function(r) {
+        sessionDraft[r.player] = { reloads: r.reloads.slice(), final: r.final };
+      });
+      document.getElementById('sessDate').value = s.date;
+      document.getElementById('sessName').value = s.name;
+      document.getElementById('editBannerName').textContent = s.name + ' (' + s.date + ')';
+      document.getElementById('settleCard').style.display = 'none';
+      document.getElementById('bankCheckCard').style.display = 'none';
+      switchTab('sessions');
+    }
+    // Salir del modo edición sin guardar cambios
+    function cancelEdit() {
+      editingSessionId = null;
+      sessionDraft = {};
+      document.getElementById('sessName').value = '';
+      document.getElementById('sessDate').valueAsDate = new Date();
+      document.getElementById('settleCard').style.display = 'none';
+      document.getElementById('bankCheckCard').style.display = 'none';
+      renderSessionForm();
+    }
     function renderHistory() {
       var el = document.getElementById('historyList');
       if (data.sessions.length === 0) { el.innerHTML = '<div class="empty">No hay sesiones registradas</div>'; return; }
@@ -824,7 +878,10 @@
         html += '<div class="card" style="margin-bottom:14px;">';
         html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">';
         html += '<h4 style="color:var(--accent-gold); margin:0; font-family:Orbitron,sans-serif; font-size:13px; letter-spacing:1px;">' + s.name + ' <span style="color:#444; font-size:11px; font-weight:400;">(' + s.date + ')</span></h4>';
+        html += '<div style="display:flex; align-items:center; gap:8px;">';
         html += '<span class="tag">$' + s.totalLoaned.toFixed(2) + ' PRESTADO</span>';
+        html += '<button class="btn btn-outline btn-small" onclick="editSession(' + s.id + ')">✏️ Editar</button>';
+        html += '</div>';
         html += '</div>';
         html += '<table style="width:100%; border-collapse:collapse; font-size:14px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:Orbitron,sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:8px;">Jugador</th><th style="text-align:left; padding:8px;">Recargas</th><th style="text-align:left; padding:8px;">Total prestado</th><th style="text-align:left; padding:8px;">Fichas finales</th><th style="text-align:left; padding:8px;">Neto</th></tr></thead><tbody>';
         s.results.forEach(function(r) {
@@ -860,6 +917,8 @@
           var imported = JSON.parse(e.target.result);
           if (imported.players && imported.sessions) {
             data = imported;
+            sessionDraft = {};
+            editingSessionId = null;
             save();
             renderPlayers(); renderHistory(); renderSessionForm();
             alert('Datos importados correctamente');
@@ -873,6 +932,7 @@
       if (!confirm('¿Borrar TODOS los datos? Esto no se puede deshacer.')) return;
       data = {players: [], sessions: []};
       sessionDraft = {};
+      editingSessionId = null;
       save();
       renderPlayers(); renderHistory(); renderSessionForm();
       document.getElementById('settleCard').style.display = 'none';

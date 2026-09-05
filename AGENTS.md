@@ -8,7 +8,7 @@
 - **Sesiones**: registrar una sesión de juego con las recargas (préstamos del banco) y las fichas finales de cada jugador; calcula el neto por jugador (`fichas finales − total prestado`).
 - **Liquidación**: genera automáticamente las transferencias mínimas entre jugadores para saldar deudas (algoritmo greedy deudor→acreedor).
 - **Verificación del banco**: compara el total prestado contra las fichas en mesa y alerta si hay diferencia.
-- **Historial**: lista de sesiones guardadas, con exportación/importación de datos en JSON y opción de borrar todo.
+- **Historial**: lista de sesiones guardadas, con **edición** de sesiones (corrige recargas/fichas y recalcula la liquidación conservando la sesión original), exportación/importación de datos en JSON y opción de borrar todo.
 
 La interfaz y los comentarios del código están **en español**; mantén ese idioma para cualquier texto visible al usuario o comentario nuevo.
 
@@ -41,7 +41,8 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
   - `save()` centraliza la persistencia.
   - `JUGADORES`: `addPlayer`, `removePlayer`, `renderPlayers` (incluye cálculo de balance global).
   - `SESIONES`: `getDraft`, `addReload`, `addCustomReload`, `removeReload`, `updateFinal`, `renderSessionForm`, `saveSession`, `showSettle`, `showBankCheck`.
-  - `HISTORIAL`: `renderHistory`, `exportData`, `importData`, `clearAll`.
+  - `HISTORIAL`: `renderHistory`, `editSession` (carga una sesión en el formulario, activa `editingSessionId`), `cancelEdit`, `exportData`, `importData`, `clearAll`.
+  - Edición de sesiones: la variable global `editingSessionId` (null = nueva sesión) indica qué sesión se está editando; `saveSession` actualiza en lugar de crear cuando está definido.
 
 ## Comandos de build y prueba
 
@@ -66,11 +67,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.1.2** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.0** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.1.2';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.1.2">` en el `<head>`.
-3. El parámetro `?v=1.1.2` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.2.0';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.2.0">` en el `<head>`.
+3. El parámetro `?v=1.2.0` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
