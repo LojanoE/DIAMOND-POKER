@@ -103,11 +103,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.3.1** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.4.0** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.3.1';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.3.1">` en el `<head>`.
-3. El parámetro `?v=1.3.1` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.4.0';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.4.0">` en el `<head>`.
+3. El parámetro `?v=1.4.0` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
@@ -136,3 +136,4 @@ Repositorio git. `.gitattributes` fuerza normalización de fin de línea LF (`* 
 - **1.2.2** — Entrada numérica móvil: campos con `inputmode="decimal"` (teclado numérico en Android/iPhone) y `parseNum` que acepta punto o coma como separador decimal indistintamente.
 - **1.3.0** — Rediseño tipo mesa de poker (verde paño, dorado, fichas), navegación inferior en móvil, tablas como tarjetas, selección de quién jugó, resumen y netos en vivo, toast/modal propios (sin alert/confirm), compartir liquidación, historial colapsable con borrado de sesión, ranking global, escape de HTML (`escHtml`) e índices en `onclick`.
 - **1.3.1** — Autoactualización: `checkUpdate` compara la versión del servidor (fetch sin caché) con `APP_VERSION` y recarga si difiere; soluciona la caché de la app instalada.
+- **1.4.0** — Imagen resumen para compartir: `drawSessionImage` (canvas 1080px estilo mesa de poker con resultados y transferencias), `shareImage`/`shareLastImage`/`shareSessionImage` (Web Share con archivo en móvil, descarga PNG en escritorio); botones "Compartir imagen" y "Texto".

@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta name="version" content="1.3.1">
+  <meta name="version" content="1.4.0">
   <!-- Íconos de la app (pantalla de inicio / marcadores) -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1f17">
@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <title>DIAMOND CLUB — Poker Tracker</title>
   <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.3.1" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.4.0" rel="stylesheet">
   <style>
     :root {
       --bg: #0b1f17;
@@ -566,7 +566,8 @@
         <h3 class="section-title">Liquidación</h3>
         <div id="settleResults"></div>
         <div class="actions">
-          <button class="btn btn-primary" onclick="shareLast()">📤 Compartir</button>
+          <button class="btn btn-primary" onclick="shareLastImage()">🖼 Compartir imagen</button>
+          <button class="btn btn-outline" onclick="shareLast()">📤 Texto</button>
         </div>
       </div>
 
@@ -609,7 +610,7 @@
     // incrementar APP_VERSION y actualizar también:
     //   1. <meta name="version"> en el <head>
     //   2. el parámetro ?v= del link de Google Fonts
-    var APP_VERSION = '1.3.1';
+    var APP_VERSION = '1.4.0';
     document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
 
     var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
@@ -1015,6 +1016,181 @@
       if (s) shareText(buildShareText(s.name, s.date, s.results));
     }
 
+    // ========== IMAGEN RESUMEN ==========
+    var CHIP_COLORS = ['#c8102e', '#1e5bb8', '#1a1a1a', '#1d7a4f', '#7a3fb0'];
+    // Recorta el texto con "…" para que quepa en maxW (el contexto ya tiene la fuente aplicada)
+    function fitText(ctx, text, maxW) {
+      if (ctx.measureText(text).width <= maxW) return text;
+      while (text.length > 1 && ctx.measureText(text + '…').width > maxW) text = text.slice(0, -1);
+      return text + '…';
+    }
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    // Dibuja el resumen de la sesión y devuelve el canvas
+    function drawSessionImage(name, date, results) {
+      var W = 1080, PAD = 70, ROW = 96;
+      var sorted = results.slice().sort(function(a, b) { return b.net - a.net; });
+      var tr = calcTransfers(results);
+      var trRows = Math.max(tr.length, 1);
+      var H = 330 + sorted.length * ROW + 110 + trRows * 80 + 110;
+      var canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      var ctx = canvas.getContext('2d');
+      var TITLE = 'Orbitron, Arial, sans-serif', BODY = 'Rajdhani, Arial, sans-serif';
+
+      // Fondo paño con degradado radial
+      var g = ctx.createRadialGradient(W / 2, H * 0.35, 80, W / 2, H * 0.35, H * 0.9);
+      g.addColorStop(0, '#1a4a37');
+      g.addColorStop(1, '#0b1f17');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      // Borde dorado
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 6;
+      roundRect(ctx, 24, 24, W - 48, H - 48, 36);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(212,175,55,0.35)';
+      ctx.lineWidth = 2;
+      roundRect(ctx, 40, 40, W - 80, H - 80, 28);
+      ctx.stroke();
+
+      // Cabecera
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = '#d4af37';
+      ctx.font = '900 56px ' + TITLE;
+      ctx.fillText('♦ DIAMOND CLUB', W / 2, 140);
+      ctx.fillStyle = '#f2efe6';
+      ctx.font = '700 44px ' + BODY;
+      ctx.fillText(fitText(ctx, name, W - PAD * 2 - 40), W / 2, 205);
+      ctx.fillStyle = '#b8c4bd';
+      ctx.font = '500 32px ' + BODY;
+      ctx.fillText(formatDate(date), W / 2, 252);
+
+      // Título de sección
+      function sectionTitle(text, y) {
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#d4af37';
+        ctx.font = '700 28px ' + TITLE;
+        ctx.fillText(text, PAD, y);
+        ctx.fillRect(PAD, y + 14, W - PAD * 2, 2);
+      }
+
+      // Resultados
+      var y = 320;
+      sectionTitle('RESULTADOS', y);
+      y += 40;
+      sorted.forEach(function(r, i) {
+        var cy = y + ROW / 2;
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0)';
+        roundRect(ctx, PAD - 14, y + 4, W - PAD * 2 + 28, ROW - 8, 18);
+        ctx.fill();
+        // Avatar-ficha
+        ctx.beginPath();
+        ctx.arc(PAD + 34, cy, 34, 0, Math.PI * 2);
+        ctx.fillStyle = CHIP_COLORS[i % CHIP_COLORS.length];
+        ctx.fill();
+        ctx.strokeStyle = '#f2efe6';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 7]);
+        ctx.beginPath();
+        ctx.arc(PAD + 34, cy, 28, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#f2efe6';
+        ctx.font = '700 32px ' + TITLE;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(r.player).charAt(0).toUpperCase(), PAD + 34, cy + 2);
+        // Nombre
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#f2efe6';
+        ctx.font = '700 40px ' + BODY;
+        ctx.fillText(fitText(ctx, (i === 0 && r.net > 0 ? '🏆 ' : '') + r.player, 500), PAD + 96, cy + 2);
+        // Neto
+        ctx.textAlign = 'right';
+        ctx.fillStyle = r.net > 0 ? '#3ddc84' : r.net < 0 ? '#ff5c5c' : '#b8c4bd';
+        ctx.font = '700 40px ' + TITLE;
+        ctx.fillText(signedMoney(r.net), W - PAD, cy + 2);
+        y += ROW;
+      });
+
+      // Transferencias
+      ctx.textBaseline = 'alphabetic';
+      y += 50;
+      sectionTitle('TRANSFERENCIAS', y);
+      y += 40;
+      if (tr.length === 0) {
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#3ddc84';
+        ctx.font = '700 38px ' + BODY;
+        ctx.fillText('✓ Todos quedaron a mano', W / 2, y + 52);
+      } else {
+        tr.forEach(function(t) {
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#d4af37';
+          ctx.font = '700 38px ' + TITLE;
+          var amt = money(t.amount);
+          ctx.fillText(amt, W - PAD, y + 40);
+          var maxW = W - PAD * 2 - ctx.measureText(amt).width - 30;
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#f2efe6';
+          ctx.font = '600 36px ' + BODY;
+          ctx.fillText(fitText(ctx, t.from + '  →  ' + t.to, maxW), PAD, y + 42);
+          y += 80;
+        });
+      }
+
+      // Pie
+      ctx.textBaseline = 'alphabetic';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(184,196,189,0.7)';
+      ctx.font = '500 26px ' + BODY;
+      ctx.fillText('DIAMOND CLUB · Poker Tracker', W / 2, H - 70);
+      return canvas;
+    }
+    // Genera el PNG y lo comparte (móvil) o lo descarga (escritorio)
+    function shareImage(name, date, results) {
+      var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      ready.then(function() {
+        var canvas = drawSessionImage(name, date, results);
+        canvas.toBlob(function(blob) {
+          if (!blob) { toast('No se pudo crear la imagen', 'error'); return; }
+          var fname = 'diamondclub_' + date + '.png';
+          var file = null;
+          try { file = new File([blob], fname, { type: 'image/png' }); } catch (e) {}
+          if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], text: '♦ DIAMOND CLUB — ' + name }).catch(function() {});
+            return;
+          }
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = fname;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function() { URL.revokeObjectURL(a.href); }, 2000);
+          toast('Imagen descargada', 'ok');
+        }, 'image/png');
+      }, function() { toast('No se pudo crear la imagen', 'error'); });
+    }
+    function shareLastImage() {
+      if (lastSettle) shareImage(lastSettle.name, lastSettle.date, lastSettle.results);
+    }
+    function shareSessionImage(id) {
+      var s = findSession(id);
+      if (s) shareImage(s.name, s.date, s.results);
+    }
+
     // ========== HISTORIAL ==========
     function findSession(id) {
       for (var i = 0; i < data.sessions.length; i++) if (data.sessions[i].id === id) return data.sessions[i];
@@ -1080,7 +1256,8 @@
         html += renderTransfers(calcTransfers(s.results));
         html += '<div class="actions">';
         html += '<button class="btn btn-outline btn-small" onclick="editSession(' + s.id + ')">✏️ Editar</button>';
-        html += '<button class="btn btn-outline btn-small" onclick="shareSession(' + s.id + ')">📤 Compartir</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="shareSessionImage(' + s.id + ')">🖼 Imagen</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="shareSession(' + s.id + ')">📤 Texto</button>';
         html += '<button class="btn btn-danger btn-small" onclick="deleteSession(' + s.id + ')">🗑 Borrar</button>';
         html += '</div>';
         html += '</div>';
