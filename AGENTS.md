@@ -14,7 +14,7 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
 
 ## Arquitectura y stack tecnológico
 
-- **Un solo archivo HTML autocontenido**: `index.html` (~950 líneas) contiene HTML, CSS (dentro de `<style>`) y JavaScript (dentro de `<script>`). No hay carpetas ni módulos.
+- **Un solo archivo HTML autocontenido**: `index.html` (~800 líneas) contiene HTML, CSS (dentro de `<style>`) y JavaScript (dentro de `<script>`). No hay carpetas ni módulos.
 - **Íconos/PWA**: `manifest.json` + `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (diamante ♦ generado con `gen_icon.py`, script Python/PIL) permiten "Agregar a pantalla de inicio" con ícono propio.
 - **Sin dependencias de build, sin frameworks, sin npm/pip/cargo**: no existe `package.json`, `pyproject.toml` ni ningún archivo de configuración de build. El único archivo de configuración del repo es `.gitattributes` (normalización LF).
 - **Dependencia externa única**: fuentes de Google Fonts (`Orbitron` y `Rajdhani`) cargadas por CDN. Requiere internet solo para las fuentes; la app funciona sin ellas (degrada tipografía).
@@ -34,16 +34,16 @@ La interfaz y los comentarios del código están **en español**; mantén ese id
 
 ## Estructura del código (dentro del archivo HTML)
 
-- **CSS** (`<style>`): variables de tema en `:root` (paleta oscura con acentos rojo/naranja/dorado), clases por componente (`.card`, `.btn`, `.tab`, `.player-block`, `.balance-item`, `.version-badge`, etc.).
+- **CSS** (`<style>`): variables de tema en `:root` (paleta verde paño `#0b1f17`/`#123227` con acento dorado `#d4af37`, fichas rojo/azul, ganancia `#3ddc84`, pérdida `#ff5c5c`), clases por componente (`.card`, `.btn`, `.tab`, `.player-block`, `.rank-row`, `.play-chip`, `.chip-token`, `.hist-card`, `.settle-card`, `.version-badge`, etc.).
 - **HTML** (`<body>`): header (con badge de versión `#versionBadge`), barra de pestañas (`.tabs`) y tres secciones `tab-content`: `players`, `sessions`, `history`.
 - **JavaScript** (`<script>`), organizado en secciones con comentarios `// ========== NOMBRE ==========`:
   - `VERSIÓN`: constante `APP_VERSION` (única fuente de verdad de la versión, ver sección de versionado).
   - Estado global: `data` (cargado de localStorage) y `sessionDraft` (borrador de la sesión en curso, en memoria).
   - `save()` centraliza la persistencia.
   - `parseNum(val)` convierte entrada numérica aceptando punto O coma como separador decimal. TODOS los campos numéricos usan `type="text" inputmode="decimal"` (teclado numérico en móviles) y deben parsearse con `parseNum`, nunca con `parseFloat` directo.
-  - `JUGADORES`: `addPlayer`, `removePlayer`, `renderPlayers` (incluye cálculo de balance global).
-  - `SESIONES`: `getDraft`, `addReload`, `addCustomReload`, `removeReload`, `updateFinal`, `renderSessionForm`, `saveSession`, `showSettle`, `showBankCheck`.
-  - `HISTORIAL`: `renderHistory`, `editSession` (carga una sesión en el formulario, activa `editingSessionId`), `cancelEdit`, `exportData`, `importData`, `clearAll`.
+  - `JUGADORES`: `addPlayer`, `removePlayer`, `renderPlayers` (incluye ranking de balance global).
+  - `SESIONES`: `getDraft`, `togglePlaying`, `addReloadAmt`, `addCustomReload`, `removeReload`, `updateFinal`, `updateLive`, `renderSessionForm`, `calcTransfers`, `renderResultsTable`, `renderTransfers`, `saveSession`, `showSettle`, `showBankCheck`; compartir: `buildShareText`, `shareText`, `shareLast`, `shareSession`. Utilidades: `escHtml`, `money`, `formatDate`, `toast`, `confirmDialog`.
+  - `HISTORIAL`: `renderHistory`, `toggleHist`, `deleteSession`, `editSession` (carga una sesión en el formulario, activa `editingSessionId`), `cancelEdit`, `exportData`, `importData`, `clearAll`.
   - Edición de sesiones: la variable global `editingSessionId` (null = nueva sesión) indica qué sesión se está editando; `saveSession` actualiza en lugar de crear cuando está definido.
 
 ## Archivos del repositorio
@@ -103,11 +103,11 @@ No hay build, tests ni linter configurados. Flujo de trabajo:
 
 ## Control de versiones de la app y caché
 
-La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.2.2** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
+La app tiene un **versionado manual** para forzar la actualización de caché en los navegadores de los usuarios. La versión actual es **1.3.0** y se define en **tres lugares que deben mantenerse sincronizados** dentro de `index.html`:
 
-1. `var APP_VERSION = '1.2.2';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
-2. `<meta name="version" content="1.2.2">` en el `<head>`.
-3. El parámetro `?v=1.2.2` del `<link>` de Google Fonts (rompe la caché del recurso externo).
+1. `var APP_VERSION = '1.3.0';` al inicio del `<script>` — **única fuente de verdad**; se muestra en el badge del header (`#versionBadge`).
+2. `<meta name="version" content="1.3.0">` en el `<head>`.
+3. El parámetro `?v=1.3.0` del `<link>` de Google Fonts (rompe la caché del recurso externo).
 
 **Regla obligatoria**: ante CUALQUIER cambio en la app (HTML, CSS o JS), incrementar la versión (semver: patch para fixes, minor para features, major para cambios incompatibles) en los tres lugares anteriores. Esto garantiza que los usuarios siempre reciban la versión más reciente.
 
@@ -134,3 +134,4 @@ Repositorio git. `.gitattributes` fuerza normalización de fin de línea LF (`* 
 - **1.2.0** — Edición de sesiones guardadas desde el historial (`editSession`/`cancelEdit`, `editingSessionId`); al guardar se actualiza la sesión y se recalcula la liquidación.
 - **1.2.1** — Ícono de poker (diamante ♦) para pantalla de inicio: `manifest.json` + íconos PNG + favicon real.
 - **1.2.2** — Entrada numérica móvil: campos con `inputmode="decimal"` (teclado numérico en Android/iPhone) y `parseNum` que acepta punto o coma como separador decimal indistintamente.
+- **1.3.0** — Rediseño tipo mesa de poker (verde paño, dorado, fichas), navegación inferior en móvil, tablas como tarjetas, selección de quién jugó, resumen y netos en vivo, toast/modal propios (sin alert/confirm), compartir liquidación, historial colapsable con borrado de sesión, ranking global, escape de HTML (`escHtml`) e índices en `onclick`.

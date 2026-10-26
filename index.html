@@ -7,590 +7,601 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <meta name="version" content="1.2.2">
+  <meta name="version" content="1.3.0">
   <!-- Íconos de la app (pantalla de inicio / marcadores) -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#050505">
+  <meta name="theme-color" content="#0b1f17">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <title>DIAMOND CLUB — Poker Tracker</title>
   <!-- El parámetro ?v= debe coincidir con APP_VERSION para romper caché de las fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.2.2" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap&v=1.3.0" rel="stylesheet">
   <style>
     :root {
-      --bg: #050505;
-      --bg-card: #0a0a0a;
-      --bg-input: #111111;
-      --border: #2a1a1a;
-      --border-glow: #ff3b3b;
-      --accent-red: #ff2a2a;
-      --accent-orange: #ff6b00;
-      --accent-gold: #ffaa00;
-      --accent-green: #00ff88;
-      --text: #e8e8e8;
-      --text-dim: #888888;
-      --glow-red: 0 0 12px rgba(255, 43, 43, 0.4), 0 0 30px rgba(255, 43, 43, 0.15);
-      --glow-orange: 0 0 12px rgba(255, 107, 0, 0.4), 0 0 30px rgba(255, 107, 0, 0.15);
-      --glow-gold: 0 0 12px rgba(255, 170, 0, 0.4), 0 0 30px rgba(255, 170, 0, 0.15);
+      --bg: #0b1f17;
+      --bg-card: #123227;
+      --bg-card-2: #0f2a20;
+      --bg-input: #0b1f17;
+      --border: #1f4a3a;
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --chip-red: #c8102e;
+      --chip-blue: #1e5bb8;
+      --chip-black: #1a1a1a;
+      --chip-white: #f2efe6;
+      --win: #3ddc84;
+      --lose: #ff5c5c;
+      --text: #f2efe6;
+      --text-dim: #b8c4bd;
+      --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
       font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       background-image:
-        radial-gradient(circle at 20% 20%, rgba(255, 43, 43, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255, 107, 0, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(255, 170, 0, 0.03) 0%, transparent 60%);
+        radial-gradient(ellipse at 50% 0%, rgba(40, 110, 80, 0.45) 0%, transparent 65%),
+        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.45) 0%, transparent 60%);
+      background-attachment: fixed;
     }
-    .container { padding: 20px; max-width: 1000px; margin: 0 auto; }
+    .container { padding: 20px; max-width: 900px; margin: 0 auto; }
+    button { font-family: inherit; }
 
     /* HEADER */
     .header {
-      text-align: center;
-      margin-bottom: 28px;
-      padding: 24px 0;
-      position: relative;
-    }
-    .header::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%; transform: translateX(-50%);
-      width: 200px; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-red), var(--accent-orange), var(--accent-gold), var(--accent-orange), var(--accent-red), transparent);
-      box-shadow: 0 0 15px rgba(255, 43, 43, 0.6);
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 300px; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.4), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 8px 0 18px;
+      flex-wrap: wrap;
     }
     .header h1 {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 32px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      background: linear-gradient(180deg, #fff 0%, var(--accent-gold) 40%, var(--accent-orange) 70%, var(--accent-red) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: 0 0 40px rgba(255, 107, 0, 0.3);
-      margin: 0;
-    }
-    .header p {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-top: 8px;
-    }
-    .version-badge {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 2px 10px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
+      font-size: 26px;
       letter-spacing: 2px;
-      color: var(--accent-gold);
+      color: var(--gold);
+    }
+    .header .logo { font-size: 28px; color: var(--gold); line-height: 1; }
+    .version-badge {
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
       border: 1px solid var(--border);
       border-radius: 10px;
-      background: var(--bg-card);
-    }
-    .diamond-icon {
-      display: inline-block;
-      width: 12px; height: 12px;
-      background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
-      transform: rotate(45deg);
-      margin: 0 12px;
-      box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
-      vertical-align: middle;
+      background: var(--bg-card-2);
     }
 
-    /* CARDS */
+    /* TARJETAS */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 18px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-gold), var(--accent-orange), var(--accent-red));
-      opacity: 0.6;
-    }
-    .card:hover {
-      border-color: rgba(255, 107, 0, 0.3);
-      box-shadow: 0 0 20px rgba(255, 43, 43, 0.08);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
     }
     .section-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin: 0 0 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      color: var(--gold);
+      margin: 0 0 14px;
     }
-    .section-title::before {
-      content: '';
-      width: 4px; height: 16px;
-      background: linear-gradient(180deg, var(--accent-red), var(--accent-orange));
-      border-radius: 2px;
-      box-shadow: 0 0 8px rgba(255, 43, 43, 0.5);
-    }
+    .hint { font-size: 15px; color: var(--text-dim); margin-bottom: 12px; }
+    .hint strong { color: var(--text); }
+    .sub-title { font-size: 16px; font-weight: 700; color: var(--gold); margin: 6px 0 10px; }
 
-    /* FORMS */
-    .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
-    .form input, .form select {
+    /* FORMULARIOS */
+    .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .form.add-player { grid-template-columns: 1fr auto; }
+    input[type="text"], input[type="date"] {
       background: var(--bg-input);
-      border: 1px solid #222;
-      border-radius: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       padding: 12px 14px;
+      min-height: 46px;
       color: var(--text);
       font-family: 'Rajdhani', sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       outline: none;
-      transition: all 0.3s;
+      transition: border-color 0.2s;
+      width: 100%;
     }
-    .form input:focus, .form select:focus {
-      border-color: var(--accent-orange);
-      box-shadow: 0 0 12px rgba(255, 107, 0, 0.2);
-    }
-    .form input::placeholder { color: #444; font-weight: 400; }
+    input:focus { border-color: var(--gold); }
+    input::placeholder { color: #7f9489; font-weight: 500; }
+    .field-label { font-size: 14px; color: var(--text-dim); margin-bottom: 4px; display: block; }
 
-    /* BUTTONS */
+    /* BOTONES */
     .btn {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 22px;
-      cursor: pointer;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn::after {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transition: left 0.5s;
-    }
-    .btn:hover::after { left: 100%; }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
-      color: #fff;
-      box-shadow: var(--glow-red);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(255, 43, 43, 0.5);
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #333;
-      color: var(--text-dim);
-    }
-    .btn-outline:hover {
-      border-color: var(--accent-orange);
-      color: var(--accent-orange);
-      box-shadow: 0 0 15px rgba(255, 107, 0, 0.15);
-    }
-    .btn-danger {
-      background: transparent;
-      border: 1px solid #331111;
-      color: #ff4444;
-    }
-    .btn-danger:hover {
-      border-color: #ff4444;
-      background: rgba(255, 68, 68, 0.08);
-      box-shadow: 0 0 15px rgba(255, 68, 68, 0.2);
-    }
-    .btn-small { padding: 8px 14px; font-size: 10px; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-
-    /* TABLES */
-    table { width: 100%; border-collapse: collapse; font-size: 14px; font-family: 'Rajdhani', sans-serif; }
-    th {
-      text-align: left;
-      padding: 12px 14px;
-      color: var(--accent-orange);
-      border-bottom: 1px solid #2a1a1a;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-    td { padding: 12px 14px; border-bottom: 1px solid #151515; font-weight: 500; }
-    tr:hover td { background: rgba(255, 107, 0, 0.03); }
-    .positive { color: var(--accent-green); text-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
-    .negative { color: #ff4444; text-shadow: 0 0 8px rgba(255, 68, 68, 0.3); }
-    .neutral { color: #888; }
-
-    /* TAGS & CHIPS */
-    .tag {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 600;
-      letter-spacing: 1px;
-      background: rgba(255, 107, 0, 0.1);
-      border: 1px solid rgba(255, 107, 0, 0.2);
-      color: var(--accent-orange);
-    }
-    .player-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #111, #1a0a0a);
-      border: 1px solid #2a1a1a;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      margin: 4px;
-      transition: all 0.3s;
-    }
-    .player-chip:hover {
-      border-color: rgba(255, 107, 0, 0.4);
-      box-shadow: 0 0 12px rgba(255, 107, 0, 0.1);
-    }
-    .player-chip .x {
-      cursor: pointer;
-      color: #ff4444;
+      font-family: 'Rajdhani', sans-serif;
       font-size: 16px;
       font-weight: 700;
-      transition: transform 0.2s;
-    }
-    .player-chip .x:hover { transform: scale(1.2); }
-
-    /* SETTLE CARDS */
-    .settle-card {
-      background: linear-gradient(135deg, #0a0a0a, #110a0a);
-      border: 1px solid #2a1a1a;
+      border: 1px solid transparent;
       border-radius: 10px;
-      padding: 14px 18px;
-      margin-bottom: 10px;
-      position: relative;
-      overflow: hidden;
+      padding: 10px 20px;
+      min-height: 46px;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s;
     }
-    .settle-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(180deg, var(--accent-red), var(--accent-orange));
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--gold); color: #1a1405; }
+    .btn-primary:hover { background: #e3bf4a; }
+    .btn-outline { background: transparent; border-color: var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-danger { background: transparent; border-color: rgba(200, 16, 46, 0.6); color: var(--lose); }
+    .btn-danger:hover { background: rgba(200, 16, 46, 0.15); }
+    .btn-small { padding: 6px 14px; font-size: 15px; min-height: 44px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .icon-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
     }
-    .settle-card strong { color: var(--accent-gold); font-family: 'Orbitron', sans-serif; }
+    .icon-btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .icon-btn.danger { color: var(--lose); }
 
-    /* EMPTY STATE */
-    .empty {
-      text-align: center;
-      padding: 40px;
-      color: #444;
+    /* TABLAS (escritorio) / TARJETAS (móvil) */
+    .res-table { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .res-table th {
+      text-align: left;
+      padding: 10px 12px;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .res-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); font-weight: 600; }
+    .res-table .reloads-cell { font-size: 14px; color: var(--text-dim); }
+    .positive { color: var(--win); }
+    .negative { color: var(--lose); }
+    .neutral { color: var(--text-dim); }
+
+    /* ETIQUETAS */
+    .tag {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--gold-soft);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+    }
+    .tag.ok { background: rgba(61, 220, 132, 0.12); border-color: rgba(61, 220, 132, 0.4); color: var(--win); }
+    .tag.warn { background: rgba(255, 92, 92, 0.12); border-color: rgba(255, 92, 92, 0.4); color: var(--lose); }
+
+    /* JUGADORES */
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .player-row:last-child { border-bottom: none; }
+    .player-name { flex: 1; font-size: 18px; font-weight: 700; word-break: break-word; }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 16px;
+      border: 3px dashed rgba(255, 255, 255, 0.55);
+      box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+      color: #fff;
     }
+    .c0 { background: var(--chip-red); }
+    .c1 { background: var(--chip-blue); }
+    .c2 { background: var(--chip-black); }
+    .c3 { background: #1d7a4f; }
+    .c4 { background: #7a3fb0; }
 
-    /* TABS */
+    /* RANKING */
+    .rank-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--bg-card-2);
+      margin-bottom: 8px;
+      border-left: 4px solid var(--border);
+    }
+    .rank-row.won { border-left-color: var(--win); }
+    .rank-row.owed { border-left-color: var(--lose); }
+    .rank-pos { width: 32px; text-align: center; font-size: 22px; font-weight: 700; color: var(--text-dim); }
+    .rank-info { flex: 1; min-width: 0; }
+    .rank-name { font-size: 18px; font-weight: 700; word-break: break-word; }
+    .rank-sub { font-size: 14px; color: var(--text-dim); }
+    .rank-val { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; }
+    .won { color: var(--win); }
+    .owed { color: var(--lose); }
+    .even { color: var(--text-dim); }
+
+    /* ESTADO VACÍO */
+    .empty { text-align: center; padding: 28px 12px; color: var(--text-dim); font-size: 17px; }
+
+    /* PESTAÑAS */
     .tabs {
       display: flex;
       gap: 6px;
-      border-bottom: 1px solid #1a1a1a;
-      margin-bottom: 20px;
-      padding-bottom: 2px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
     }
     .tab {
-      padding: 12px 20px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      color: #555;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all 0.3s;
-      position: relative;
-    }
-    .tab:hover { color: var(--accent-orange); }
-    .tab.active {
-      color: var(--accent-gold);
-      border-bottom-color: var(--accent-orange);
-      text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* PLAYER BLOCKS (recargas) */
-    .player-block {
-      background: linear-gradient(135deg, #0a0a0a, #0f0808);
-      border: 1px solid #1a1111;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-      position: relative;
-      transition: all 0.3s;
-    }
-    .player-block:hover {
-      border-color: rgba(255, 107, 0, 0.2);
-    }
-    .player-block::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.3), transparent);
-    }
-    .player-block-header {
+      flex: 1;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
-    }
-    .player-block-name {
-      font-family: 'Orbitron', sans-serif;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: var(--text-dim);
+      font-size: 17px;
       font-weight: 700;
-      font-size: 14px;
-      color: var(--accent-gold);
-      letter-spacing: 1px;
+      transition: color 0.2s;
+      user-select: none;
     }
-    .player-block-total {
-      font-size: 12px;
-      color: #666;
-      font-family: 'Orbitron', sans-serif;
-    }
-    .reload-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .reload-tag {
-      background: linear-gradient(135deg, rgba(255,43,43,0.15), rgba(255,107,0,0.1));
-      border: 1px solid rgba(255, 107, 0, 0.25);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-orange);
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-ico { font-size: 20px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* QUIÉN JUGÓ */
+    .play-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .play-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-family: 'Orbitron', sans-serif;
-    }
-    .reload-tag .del {
-      cursor: pointer;
-      color: #ff4444;
-      font-weight: 900;
-      font-size: 14px;
-      transition: transform 0.2s;
-    }
-    .reload-tag .del:hover { transform: scale(1.3); }
-    .reload-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-    .mini-input {
-      width: 100px;
-      background: var(--bg-input);
-      border: 1px solid #222;
-      border-radius: 6px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      text-align: right;
-      outline: none;
-      transition: all 0.3s;
-    }
-    .mini-input:focus {
-      border-color: var(--accent-orange);
-      box-shadow: 0 0 10px rgba(255, 107, 0, 0.15);
-    }
-
-    /* BALANCE BOXES */
-    .balance-box {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .balance-item {
-      background: linear-gradient(135deg, #0a0a0a, #0f0808);
-      border: 1px solid #1a1111;
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s;
-    }
-    .balance-item:hover {
-      border-color: rgba(255, 107, 0, 0.2);
-      transform: translateY(-2px);
-    }
-    .balance-item::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-    }
-    .balance-item.won::before { background: linear-gradient(90deg, transparent, var(--accent-green), transparent); }
-    .balance-item.owed::before { background: linear-gradient(90deg, transparent, #ff4444, transparent); }
-    .balance-item.even::before { background: linear-gradient(90deg, transparent, #555, transparent); }
-    .balance-name {
-      font-size: 11px;
-      color: #555;
-      margin-bottom: 6px;
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .balance-val {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 20px;
+      gap: 8px;
+      padding: 6px 14px 6px 6px;
+      min-height: 44px;
+      border-radius: 24px;
+      border: 2px solid var(--border);
+      background: var(--bg-card-2);
+      color: var(--text-dim);
+      font-size: 16px;
       font-weight: 700;
+      cursor: pointer;
     }
-    .won { color: var(--accent-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-    .owed { color: #ff4444; text-shadow: 0 0 10px rgba(255, 68, 68, 0.3); }
-    .even { color: #666; }
+    .play-chip .avatar { width: 30px; height: 30px; font-size: 13px; border-width: 2px; opacity: 0.5; }
+    .play-chip.on { border-color: var(--gold); color: var(--text); background: var(--gold-soft); }
+    .play-chip.on .avatar { opacity: 1; }
 
-    /* BANK CHECK */
-    .bank-grid {
+    /* BLOQUES DE JUGADOR EN SESIÓN */
+    .player-block {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .player-block-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .player-block-name { flex: 1; font-size: 19px; font-weight: 700; word-break: break-word; }
+    .live-net { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 700; }
+    .block-label { font-size: 14px; color: var(--text-dim); margin: 8px 0 6px; }
+    .block-label strong { color: var(--gold); }
+    .reload-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip-token {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 4px 0 14px;
+      min-height: 44px;
+      border-radius: 24px;
+      background: var(--chip-red);
+      border: 3px dashed rgba(255, 255, 255, 0.6);
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+    }
+    .chip-token .icon-btn { width: 32px; height: 32px; font-size: 20px; color: #fff; }
+    .no-reloads { font-size: 15px; color: var(--text-dim); align-self: center; }
+    .reload-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+    .reload-row input { width: 110px; text-align: right; }
+    .final-row { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .final-row label { font-size: 16px; font-weight: 700; color: var(--text-dim); }
+    .final-row input { width: 140px; text-align: right; }
+
+    /* AVISO DE EDICIÓN */
+    .edit-banner {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      background: var(--gold-soft);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* RESUMEN EN VIVO */
+    .live-summary {
+      position: sticky;
+      bottom: 8px;
+      z-index: 20;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #0a1a13;
+      border: 1px solid var(--border);
+      box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.4);
       text-align: center;
-      margin-bottom: 14px;
     }
-    .bank-stat-label {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 6px;
-    }
-    .bank-stat-value {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 22px;
+    .stat-label { font-size: 13px; color: var(--text-dim); }
+    .stat-value { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 700; }
+
+    /* LIQUIDACIÓN */
+    .settle-card {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      font-size: 18px;
       font-weight: 700;
     }
+    .settle-card .from { color: var(--lose); }
+    .settle-card .to { color: var(--gold); }
+    .settle-card .arrow { color: var(--text-dim); }
+    .settle-card .amount { margin-left: auto; color: var(--win); font-family: 'Orbitron', sans-serif; font-size: 18px; }
+    .all-even { text-align: center; padding: 16px; color: var(--win); font-size: 18px; font-weight: 700; }
+    .bank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; margin-bottom: 12px; }
+    .bank-msg { text-align: center; font-size: 17px; font-weight: 700; }
+
+    /* HISTORIAL COLAPSABLE */
+    .hist-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hist-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      min-height: 64px;
+    }
+    .hist-main { flex: 1; min-width: 0; }
+    .hist-name { font-size: 18px; font-weight: 700; color: var(--gold); word-break: break-word; }
+    .hist-meta { font-size: 14px; color: var(--text-dim); }
+    .hist-arrow { font-size: 18px; color: var(--text-dim); transition: transform 0.2s; }
+    .hist-card.open .hist-arrow { transform: rotate(180deg); }
+    .hist-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+    .hist-card.open .hist-body { display: block; padding-top: 14px; }
+
+    /* MODAL Y AVISOS */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.65);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 22px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+    .modal-box p { font-size: 18px; font-weight: 600; margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 120;
+      max-width: 90%;
+      padding: 12px 20px;
+      border-radius: 24px;
+      background: #0a1a13;
+      border: 1px solid var(--gold);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: var(--lose); color: var(--lose); }
+    .toast.ok { border-color: var(--win); color: var(--win); }
 
     /* SCROLLBAR */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0a0a; }
-    ::-webkit-scrollbar-thumb { background: #2a1a1a; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    /* RESPONSIVE */
+    /* MÓVIL: navegación inferior y tablas como tarjetas */
     @media (max-width: 600px) {
-      .header h1 { font-size: 22px; letter-spacing: 2px; }
-      .tabs { overflow-x: auto; }
-      .tab { padding: 10px 14px; font-size: 10px; white-space: nowrap; }
-      .balance-box { grid-template-columns: 1fr 1fr; }
-      .bank-grid { grid-template-columns: 1fr; gap: 10px; }
+      body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+      .container { padding: 14px; }
+      .header h1 { font-size: 21px; }
+      .tabs {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 50;
+        margin: 0;
+        gap: 0;
+        background: #0a1a13;
+        border-top: 1px solid var(--border);
+        border-bottom: none;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .tab {
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 4px;
+        font-size: 14px;
+        border-bottom: none;
+        border-top: 3px solid transparent;
+      }
+      .tab.active { border-top-color: var(--gold); }
+      .tab-ico { font-size: 24px; }
+      .live-summary { bottom: calc(76px + env(safe-area-inset-bottom)); }
+      .toast { bottom: calc(92px + env(safe-area-inset-bottom)); }
+      .bank-grid { grid-template-columns: 1fr; gap: 8px; }
+      .res-table, .res-table tbody, .res-table tr, .res-table td { display: block; width: 100%; }
+      .res-table thead { display: none; }
+      .res-table tr {
+        background: var(--bg-card-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+      }
+      .res-table td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 4px 0;
+        border-bottom: none;
+        text-align: right;
+      }
+      .res-table td::before { content: attr(data-label); color: var(--text-dim); font-weight: 500; text-align: left; }
+      .res-table td.td-name { font-size: 19px; font-weight: 700; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+      .res-table td.td-name::before { content: none; }
+      .res-table td.td-net { font-size: 19px; font-weight: 700; }
+      .final-row input { width: 120px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1><span class="diamond-icon"></span>DIAMOND CLUB<span class="diamond-icon"></span></h1>
-      <p>Home Game Tracker · Cash Games & Fast Forward</p>
+      <span class="logo">♦</span>
+      <h1>DIAMOND CLUB</h1>
       <span class="version-badge" id="versionBadge"></span>
     </div>
 
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('players')" id="tab-players">👥 Jugadores</div>
-      <div class="tab" onclick="switchTab('sessions')" id="tab-sessions">🎲 Sesiones</div>
-      <div class="tab" onclick="switchTab('history')" id="tab-history">📜 Historial</div>
+      <div class="tab active" onclick="switchTab('players')" id="tab-players"><span class="tab-ico">👥</span><span>Jugadores</span></div>
+      <div class="tab" onclick="switchTab('sessions')" id="tab-sessions"><span class="tab-ico">🎲</span><span>Sesión</span></div>
+      <div class="tab" onclick="switchTab('history')" id="tab-history"><span class="tab-ico">📜</span><span>Historial</span></div>
     </div>
 
     <!-- TAB JUGADORES -->
     <div class="tab-content active" id="content-players">
       <div class="card">
-        <h3 class="section-title">Agregar Jugador</h3>
-        <div class="form" style="grid-template-columns: 1fr auto;">
-          <input type="text" id="newPlayerName" placeholder="Nombre del jugador" />
+        <h3 class="section-title">Jugadores</h3>
+        <div class="form add-player">
+          <input type="text" id="newPlayerName" placeholder="Nombre del jugador" onkeydown="if(event.key==='Enter')addPlayer()" />
           <button class="btn btn-primary" onclick="addPlayer()">Agregar</button>
         </div>
-        <div id="playersList" style="margin-top: 14px;"></div>
+        <div id="playersList"></div>
       </div>
       <div class="card" id="playerBalancesCard" style="display:none;">
-        <h3 class="section-title">Balance Global</h3>
-        <div class="balance-box" id="playerBalances"></div>
+        <h3 class="section-title">Ranking global</h3>
+        <div id="playerBalances"></div>
       </div>
     </div>
 
     <!-- TAB SESIONES -->
     <div class="tab-content" id="content-sessions">
       <div class="card">
-        <h3 class="section-title">Nueva Sesión</h3>
+        <h3 class="section-title">Nueva sesión</h3>
         <div class="form">
-          <input type="date" id="sessDate" />
-          <input type="text" id="sessName" placeholder="Nombre de la sesión (ej: Viernes 20)" />
-          <input type="text" inputmode="decimal" id="sessDefaultBuyin" placeholder="Recarga por defecto ($)" value="5" />
+          <div><label class="field-label" for="sessDate">Fecha</label><input type="date" id="sessDate" /></div>
+          <div><label class="field-label" for="sessName">Nombre</label><input type="text" id="sessName" placeholder="Ej: Viernes 20" /></div>
+          <div><label class="field-label" for="sessDefaultBuyin">Recarga por defecto ($)</label><input type="text" inputmode="decimal" id="sessDefaultBuyin" value="5" onchange="renderSessionForm()" /></div>
         </div>
-        <div style="font-size:13px; color:#555; margin-bottom:10px; font-family:Orbitron,sans-serif; letter-spacing:1px;">
-          Ingresa las <strong style="color:var(--accent-orange);">recargas</strong> del banco y las <strong style="color:var(--accent-gold);">fichas finales</strong> de cada jugador.
+        <div class="edit-banner" id="editBanner">
+          <span>✏️ Editando: <span id="editBannerName"></span></span>
+          <button class="btn btn-outline btn-small" onclick="cancelEdit()">Cancelar</button>
         </div>
-        <div id="editBanner" style="display:none; margin-bottom:12px; padding:10px 14px; border:1px solid var(--accent-gold); border-radius:8px; background:rgba(255,170,0,0.08); font-family:Orbitron,sans-serif; font-size:11px; letter-spacing:1px; color:var(--accent-gold);">
-          ✏️ EDITANDO: <span id="editBannerName"></span>
-          <button class="btn btn-outline btn-small" style="margin-left:10px;" onclick="cancelEdit()">Cancelar</button>
-        </div>
+        <div class="sub-title">¿Quién juega?</div>
+        <div class="play-chips" id="playChips"></div>
+        <div class="hint">Anota las <strong>recargas</strong> del banco y las <strong>fichas finales</strong> de cada jugador.</div>
         <div id="sessPlayersArea"></div>
+        <div class="live-summary" id="liveSummary"></div>
         <div class="actions">
-          <button class="btn btn-primary" id="saveSessionBtn" onclick="saveSession()">Guardar Sesión & Calcular</button>
+          <button class="btn btn-primary" id="saveSessionBtn" onclick="saveSession()">Guardar sesión y calcular</button>
         </div>
       </div>
 
       <div class="card" id="settleCard" style="display:none;">
         <h3 class="section-title">Liquidación</h3>
         <div id="settleResults"></div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="shareLast()">📤 Compartir</button>
+        </div>
       </div>
 
       <div class="card" id="bankCheckCard" style="display:none;">
-        <h3 class="section-title">Verificación del Banco</h3>
+        <h3 class="section-title">Verificación del banco</h3>
         <div id="bankCheckResult"></div>
       </div>
     </div>
 
     <!-- TAB HISTORIAL -->
     <div class="tab-content" id="content-history">
+      <div id="historyList"></div>
       <div class="card">
-        <h3 class="section-title">Historial de Sesiones</h3>
-        <div id="historyList"></div>
-      </div>
-      <div class="actions" style="margin-bottom: 16px;">
-        <button class="btn btn-outline" onclick="exportData()">Exportar JSON</button>
-        <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
-        <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importData(this)" />
-        <button class="btn btn-danger" onclick="clearAll()">Borrar Todo</button>
+        <h3 class="section-title">Respaldo de datos</h3>
+        <div class="actions" style="margin-top:0;">
+          <button class="btn btn-outline" onclick="exportData()">Exportar JSON</button>
+          <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
+          <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importData(this)" />
+          <button class="btn btn-danger" onclick="clearAll()">Borrar todo</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal de confirmación y aviso breve -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-box">
+      <p id="confirmMsg"></p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="confirmResolve(false)">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmResolve(true)">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
 
   <script>
     // ========== VERSIÓN ==========
@@ -598,14 +609,17 @@
     // incrementar APP_VERSION y actualizar también:
     //   1. <meta name="version"> en el <head>
     //   2. el parámetro ?v= del link de Google Fonts
-    var APP_VERSION = '1.2.2';
+    var APP_VERSION = '1.3.0';
     document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
 
     var data = JSON.parse(localStorage.getItem('poker_homegame') || '{"players":[], "sessions":[]}');
     document.getElementById('sessDate').valueAsDate = new Date();
+    // Borrador de la sesión en curso: { nombre: { reloads: [], final: 0, playing: true } }
     var sessionDraft = {};
     // ID de la sesión que se está editando (null = nueva sesión)
     var editingSessionId = null;
+    // Última liquidación mostrada (para el botón Compartir)
+    var lastSettle = null;
 
     function save() { localStorage.setItem('poker_homegame', JSON.stringify(data)); }
 
@@ -615,143 +629,282 @@
       return isNaN(n) ? 0 : n;
     }
 
+    // ========== UTILIDADES ==========
+    // Escapa texto para interpolarlo en innerHTML (nombres de jugador/sesión)
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function money(n) { return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2); }
+    function signedMoney(n) { return (n > 0 ? '+' : '') + money(n); }
+    function netClass(n) { return n > 0 ? 'positive' : n < 0 ? 'negative' : 'neutral'; }
+    // "2026-10-24" -> "vie 24 oct 2026"
+    function formatDate(str) {
+      var p = String(str).split('-');
+      if (p.length !== 3) return str;
+      var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+      if (isNaN(d.getTime())) return str;
+      var dias = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+      var meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      return dias[d.getDay()] + ' ' + d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    // Aviso breve en pantalla (tipo: 'ok' | 'error' | '')
+    var toastTimer = null;
+    function toast(msg, type) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show ' + (type || '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { el.className = 'toast'; }, 2600);
+    }
+
+    // Modal de confirmación propio (reemplaza a confirm)
+    var confirmCb = null;
+    function confirmDialog(msg, onOk) {
+      document.getElementById('confirmMsg').textContent = msg;
+      confirmCb = onOk;
+      document.getElementById('confirmModal').className = 'modal open';
+    }
+    function confirmResolve(ok) {
+      document.getElementById('confirmModal').className = 'modal';
+      var cb = confirmCb;
+      confirmCb = null;
+      if (ok && cb) cb();
+    }
+
     function switchTab(tab) {
       var tabs = document.querySelectorAll('.tab');
       for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
       var contents = document.querySelectorAll('.tab-content');
-      for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+      for (var j = 0; j < contents.length; j++) contents[j].classList.remove('active');
       document.getElementById('tab-' + tab).classList.add('active');
       document.getElementById('content-' + tab).classList.add('active');
       if (tab === 'players') renderPlayers();
       if (tab === 'history') renderHistory();
       if (tab === 'sessions') renderSessionForm();
+      window.scrollTo(0, 0);
     }
 
     // ========== JUGADORES ==========
     function addPlayer() {
       var name = document.getElementById('newPlayerName').value.trim();
-      if (!name) return alert('Ingresa un nombre');
-      if (data.players.indexOf(name) !== -1) return alert('Ese jugador ya existe');
+      if (!name) return toast('Ingresa un nombre', 'error');
+      if (data.players.indexOf(name) !== -1) return toast('Ese jugador ya existe', 'error');
       data.players.push(name);
       save();
       document.getElementById('newPlayerName').value = '';
       renderPlayers();
       renderSessionForm();
     }
-    function removePlayer(name) {
-      if (!confirm('¿Eliminar a ' + name + '?')) return;
-      data.players = data.players.filter(function(p) { return p !== name; });
-      save();
-      renderPlayers();
-      renderSessionForm();
+    function removePlayer(i) {
+      var name = data.players[i];
+      if (name === undefined) return;
+      confirmDialog('¿Eliminar a ' + name + '?', function() {
+        data.players = data.players.filter(function(p) { return p !== name; });
+        save();
+        renderPlayers();
+        renderSessionForm();
+      });
     }
     function renderPlayers() {
       var el = document.getElementById('playersList');
-      if (data.players.length === 0) { el.innerHTML = '<div class="empty">No hay jugadores registrados</div>'; }
+      if (data.players.length === 0) { el.innerHTML = '<div class="empty">Aún no hay jugadores. Agrega el primero arriba.</div>'; }
       else {
-        el.innerHTML = data.players.map(function(p) {
-          return '<span class="player-chip">' + p + '<span class="x" onclick="removePlayer(\'' + p + '\')">×</span></span>';
+        el.innerHTML = data.players.map(function(p, i) {
+          return '<div class="player-row"><span class="avatar c' + (i % 5) + '">' + escHtml(p.charAt(0).toUpperCase()) + '</span>' +
+            '<span class="player-name">' + escHtml(p) + '</span>' +
+            '<button class="icon-btn danger" aria-label="Eliminar jugador" onclick="removePlayer(' + i + ')">×</button></div>';
         }).join('');
       }
+      // Ranking global: balance acumulado y sesiones jugadas por jugador
       var balances = {};
-      data.players.forEach(function(p) { balances[p] = 0; });
+      var played = {};
+      data.players.forEach(function(p) { balances[p] = 0; played[p] = 0; });
       data.sessions.forEach(function(s) {
-        s.results.forEach(function(r) { balances[r.player] = (balances[r.player] || 0) + r.net; });
+        s.results.forEach(function(r) {
+          balances[r.player] = (balances[r.player] || 0) + r.net;
+          played[r.player] = (played[r.player] || 0) + 1;
+        });
       });
       var box = document.getElementById('playerBalances');
       var card = document.getElementById('playerBalancesCard');
       if (data.sessions.length > 0) {
         card.style.display = 'block';
-        box.innerHTML = Object.keys(balances).map(function(p) {
-          var bal = balances[p];
-          var cls = bal > 0 ? 'won' : bal < 0 ? 'owed' : 'even';
-          var sign = bal > 0 ? '+' : '';
-          return '<div class="balance-item ' + cls + '"><div class="balance-name">' + p + '</div><div class="balance-val ' + cls + '">' + sign + '$' + bal.toFixed(2) + '</div></div>';
+        var ranking = Object.keys(balances).map(function(p) { return { player: p, bal: balances[p], n: played[p] || 0 }; });
+        ranking.sort(function(a, b) { return b.bal - a.bal; });
+        var medals = ['🥇', '🥈', '🥉'];
+        box.innerHTML = ranking.map(function(r, idx) {
+          var cls = r.bal > 0 ? 'won' : r.bal < 0 ? 'owed' : 'even';
+          var pos = idx < 3 ? medals[idx] : String(idx + 1);
+          return '<div class="rank-row ' + cls + '"><span class="rank-pos">' + pos + '</span>' +
+            '<div class="rank-info"><div class="rank-name">' + escHtml(r.player) + '</div><div class="rank-sub">' + r.n + (r.n === 1 ? ' sesión' : ' sesiones') + '</div></div>' +
+            '<span class="rank-val ' + cls + '">' + signedMoney(r.bal) + '</span></div>';
         }).join('');
       } else { card.style.display = 'none'; }
     }
 
     // ========== SESIONES ==========
     function getDraft(player) {
-      if (!sessionDraft[player]) sessionDraft[player] = { reloads: [], final: 0 };
+      if (!sessionDraft[player]) sessionDraft[player] = { reloads: [], final: 0, playing: true };
       return sessionDraft[player];
     }
-    function addReload(player) {
-      var draft = getDraft(player);
-      var defaultVal = parseNum(document.getElementById('sessDefaultBuyin').value) || 5;
-      draft.reloads.push(defaultVal);
+    function defaultBuyin() { return parseNum(document.getElementById('sessDefaultBuyin').value) || 5; }
+    function addReloadAmt(i, amt) {
+      getDraft(data.players[i]).reloads.push(amt);
       renderSessionForm();
     }
-    function removeReload(player, idx) {
-      var draft = getDraft(player);
-      draft.reloads.splice(idx, 1);
+    function removeReload(i, idx) {
+      getDraft(data.players[i]).reloads.splice(idx, 1);
       renderSessionForm();
     }
-    function updateFinal(player, val) {
-      var draft = getDraft(player);
-      draft.final = parseNum(val);
+    function addCustomReload(i) {
+      var input = document.getElementById('customReload_' + i);
+      var val = parseNum(input.value);
+      if (!val || val <= 0) return toast('Ingresa un monto válido', 'error');
+      getDraft(data.players[i]).reloads.push(val);
+      renderSessionForm();
+    }
+    // Actualiza el borrador y los totales en vivo sin re-renderizar (conserva el foco)
+    function updateFinal(i, val) {
+      getDraft(data.players[i]).final = parseNum(val);
+      updateLive();
+    }
+    function togglePlaying(i) {
+      var d = getDraft(data.players[i]);
+      d.playing = !d.playing;
+      renderSessionForm();
+    }
+    function draftTotals(p) {
+      var d = getDraft(p);
+      var loaned = d.reloads.reduce(function(a, b) { return a + b; }, 0);
+      return { loaned: loaned, final: d.final || 0, net: (d.final || 0) - loaned };
+    }
+    // Netos por jugador y barra de resumen del banco
+    function updateLive() {
+      var loaned = 0, fin = 0, count = 0;
+      data.players.forEach(function(p, i) {
+        var d = getDraft(p);
+        if (!d.playing) return;
+        count++;
+        var t = draftTotals(p);
+        loaned += t.loaned;
+        fin += t.final;
+        var tot = document.getElementById('tot_' + i);
+        if (tot) tot.textContent = money(t.loaned);
+        var net = document.getElementById('net_' + i);
+        if (net) { net.textContent = signedMoney(t.net); net.className = 'live-net ' + netClass(t.net); }
+      });
+      var diff = fin - loaned;
+      var ok = Math.abs(diff) < 0.01;
+      var el = document.getElementById('liveSummary');
+      el.style.display = count > 0 ? 'grid' : 'none';
+      el.innerHTML =
+        '<div><div class="stat-label">Prestado</div><div class="stat-value" style="color:var(--gold);">' + money(loaned) + '</div></div>' +
+        '<div><div class="stat-label">En mesa</div><div class="stat-value">' + money(fin) + '</div></div>' +
+        '<div><div class="stat-label">Diferencia</div><div class="stat-value ' + (ok ? 'positive' : 'negative') + '">' + (ok ? '✓ ' : '') + signedMoney(diff) + '</div></div>';
     }
     function renderSessionForm() {
       // Actualizar banner y botón según el modo (nueva sesión o edición)
       var banner = document.getElementById('editBanner');
       var saveBtn = document.getElementById('saveSessionBtn');
       if (editingSessionId) {
-        banner.style.display = 'block';
-        saveBtn.textContent = 'Actualizar Sesión & Recalcular';
+        banner.style.display = 'flex';
+        saveBtn.textContent = 'Actualizar sesión y recalcular';
       } else {
         banner.style.display = 'none';
-        saveBtn.textContent = 'Guardar Sesión & Calcular';
+        saveBtn.textContent = 'Guardar sesión y calcular';
       }
       var area = document.getElementById('sessPlayersArea');
+      var chips = document.getElementById('playChips');
       if (data.players.length === 0) {
+        chips.innerHTML = '';
         area.innerHTML = '<div class="empty">Primero agrega jugadores en la pestaña Jugadores</div>';
+        updateLive();
         return;
       }
+      chips.innerHTML = data.players.map(function(p, i) {
+        var on = getDraft(p).playing;
+        return '<button class="play-chip' + (on ? ' on' : '') + '" onclick="togglePlaying(' + i + ')"><span class="avatar c' + (i % 5) + '">' + escHtml(p.charAt(0).toUpperCase()) + '</span>' + escHtml(p) + '</button>';
+      }).join('');
+
+      var base = defaultBuyin();
       var html = '';
-      data.players.forEach(function(p) {
+      data.players.forEach(function(p, i) {
         var draft = getDraft(p);
-        var totalLoan = draft.reloads.reduce(function(a, b) { return a + b; }, 0);
-        var safeId = p.replace(/\s/g, '_');
+        if (!draft.playing) return;
         html += '<div class="player-block">';
         html += '<div class="player-block-header">';
-        html += '<span class="player-block-name">' + p + '</span>';
-        html += '<span class="player-block-total">TOTAL PRESTADO: <strong style="color:var(--accent-gold);">$' + totalLoan.toFixed(2) + '</strong></span>';
+        html += '<span class="avatar c' + (i % 5) + '">' + escHtml(p.charAt(0).toUpperCase()) + '</span>';
+        html += '<span class="player-block-name">' + escHtml(p) + '</span>';
+        html += '<span class="live-net" id="net_' + i + '"></span>';
         html += '</div>';
-        html += '<div style="font-size:11px; color:#444; font-family:Orbitron,sans-serif; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">Recargas del banco</div>';
+        html += '<div class="block-label">Recargas del banco · total <strong id="tot_' + i + '"></strong></div>';
         html += '<div class="reload-list">';
         draft.reloads.forEach(function(amt, idx) {
-          html += '<span class="reload-tag">$' + amt.toFixed(2) + '<span class="del" onclick="removeReload(\'' + p + '\',' + idx + ')">×</span></span>';
+          html += '<span class="chip-token">' + money(amt) + '<button class="icon-btn" aria-label="Quitar recarga" onclick="removeReload(' + i + ',' + idx + ')">×</button></span>';
         });
-        if (draft.reloads.length === 0) html += '<span style="font-size:12px; color:#333;">Sin recargas</span>';
+        if (draft.reloads.length === 0) html += '<span class="no-reloads">Sin recargas</span>';
         html += '</div>';
         html += '<div class="reload-row">';
-        html += '<button class="btn btn-outline btn-small" onclick="addReload(\'' + p + '\')">➕ Recarga $' + (parseNum(document.getElementById('sessDefaultBuyin').value) || 5) + '</button>';
-        html += '<input type="text" inputmode="decimal" class="mini-input" style="width:110px;" placeholder="Otro monto" id="customReload_' + safeId + '" />';
-        html += '<button class="btn btn-outline btn-small" onclick="addCustomReload(\'' + p + '\')">Agregar</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="addReloadAmt(' + i + ',' + base + ')">+ ' + money(base) + '</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="addReloadAmt(' + i + ',' + (base * 2) + ')">+ ' + money(base * 2) + '</button>';
+        html += '<input type="text" inputmode="decimal" placeholder="Otro monto" id="customReload_' + i + '" />';
+        html += '<button class="btn btn-outline btn-small" onclick="addCustomReload(' + i + ')">Agregar</button>';
         html += '</div>';
-        html += '<div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">';
-        html += '<span style="font-size:12px; color:#555; font-family:Orbitron,sans-serif; letter-spacing:1px; text-transform:uppercase;">Fichas finales</span>';
-        html += '<input type="text" inputmode="decimal" class="mini-input" style="width:130px;" id="final_' + safeId + '" placeholder="$0.00" value="' + (draft.final || '') + '" onchange="updateFinal(\'' + p + '\', this.value)" />';
+        html += '<div class="final-row">';
+        html += '<label for="final_' + i + '">Fichas finales</label>';
+        html += '<input type="text" inputmode="decimal" id="final_' + i + '" placeholder="$0.00" value="' + (draft.final || '') + '" oninput="updateFinal(' + i + ', this.value)" />';
         html += '</div>';
         html += '</div>';
       });
+      if (!html) html = '<div class="empty">Marca al menos un jugador arriba</div>';
       area.innerHTML = html;
+      updateLive();
     }
-    function addCustomReload(player) {
-      var safeId = player.replace(/\s/g, '_');
-      var val = parseNum(document.getElementById('customReload_' + safeId).value);
-      if (!val || val <= 0) return alert('Ingresa un monto válido');
-      var draft = getDraft(player);
-      draft.reloads.push(val);
-      document.getElementById('customReload_' + safeId).value = '';
-      renderSessionForm();
+
+    // Transferencias mínimas deudor → acreedor (greedy)
+    function calcTransfers(results) {
+      var debtors = results.filter(function(r) { return r.net < 0; }).map(function(r) { return { player: r.player, amount: Math.abs(r.net) }; });
+      var creditors = results.filter(function(r) { return r.net > 0; }).map(function(r) { return { player: r.player, amount: r.net }; });
+      var transactions = [];
+      var d = 0, c = 0;
+      while (d < debtors.length && c < creditors.length) {
+        var pay = Math.min(debtors[d].amount, creditors[c].amount);
+        transactions.push({ from: debtors[d].player, to: creditors[c].player, amount: pay });
+        debtors[d].amount -= pay;
+        creditors[c].amount -= pay;
+        if (debtors[d].amount < 0.01) d++;
+        if (creditors[c].amount < 0.01) c++;
+      }
+      return transactions;
+    }
+    // Tabla de resultados (en móvil el CSS la muestra como tarjetas)
+    function renderResultsTable(results) {
+      var html = '<table class="res-table"><thead><tr><th>Jugador</th><th>Recargas</th><th>Prestado</th><th>Fichas finales</th><th>Neto</th></tr></thead><tbody>';
+      results.forEach(function(r) {
+        var reloadsText = r.reloads.map(function(x) { return money(x); }).join(' + ') || '—';
+        html += '<tr><td class="td-name">' + escHtml(r.player) + '</td>' +
+          '<td class="reloads-cell" data-label="Recargas">' + reloadsText + '</td>' +
+          '<td data-label="Prestado">' + money(r.totalLoaned) + '</td>' +
+          '<td data-label="Fichas finales">' + money(r.final) + '</td>' +
+          '<td class="td-net ' + netClass(r.net) + '" data-label="Neto">' + signedMoney(r.net) + '</td></tr>';
+      });
+      return html + '</tbody></table>';
+    }
+    function renderTransfers(transactions) {
+      if (transactions.length === 0) return '<div class="all-even">✓ Todos quedaron a mano</div>';
+      var html = '<div class="sub-title">Transferencias</div>';
+      transactions.forEach(function(t) {
+        html += '<div class="settle-card"><span class="from">' + escHtml(t.from) + '</span><span class="arrow">→</span><span class="to">' + escHtml(t.to) + '</span><span class="amount">' + money(t.amount) + '</span></div>';
+      });
+      return html;
     }
 
     function saveSession() {
       var date = document.getElementById('sessDate').value;
       var name = document.getElementById('sessName').value.trim() || 'Sesión';
-      if (!date) return alert('Ingresa una fecha');
-      if (data.players.length === 0) return alert('Agrega jugadores primero');
+      if (!date) return toast('Ingresa una fecha', 'error');
+      if (data.players.length === 0) return toast('Agrega jugadores primero', 'error');
 
       var results = [];
       var totalLoaned = 0;
@@ -759,13 +912,13 @@
 
       data.players.forEach(function(p) {
         var draft = getDraft(p);
-        var totalBuyin = draft.reloads.reduce(function(a, b) { return a + b; }, 0);
-        var final = draft.final || 0;
-        var net = final - totalBuyin;
-        results.push({ player: p, reloads: draft.reloads.slice(), totalLoaned: totalBuyin, final: final, net: net });
-        totalLoaned += totalBuyin;
-        totalFinal += final;
+        if (!draft.playing) return;
+        var t = draftTotals(p);
+        results.push({ player: p, reloads: draft.reloads.slice(), totalLoaned: t.loaned, final: t.final, net: t.net });
+        totalLoaned += t.loaned;
+        totalFinal += t.final;
       });
+      if (results.length === 0) return toast('Marca al menos un jugador', 'error');
 
       var diff = totalFinal - totalLoaned;
       if (editingSessionId) {
@@ -782,6 +935,7 @@
       }
       save();
 
+      lastSettle = { name: name, date: date, results: results };
       showSettle(results);
       showBankCheck(totalLoaned, totalFinal, diff);
 
@@ -789,82 +943,97 @@
       sessionDraft = {};
       document.getElementById('sessName').value = '';
       renderSessionForm();
+      toast('Sesión guardada', 'ok');
+      document.getElementById('settleCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function showSettle(results) {
       var card = document.getElementById('settleCard');
-      var el = document.getElementById('settleResults');
       card.style.display = 'block';
-
-      var debtors = results.filter(function(r) { return r.net < 0; }).map(function(r) { return { player: r.player, amount: Math.abs(r.net) }; });
-      var creditors = results.filter(function(r) { return r.net > 0; }).map(function(r) { return { player: r.player, amount: r.net }; });
-
-      var transactions = [];
-      var d = 0, c = 0;
-      while (d < debtors.length && c < creditors.length) {
-        var pay = Math.min(debtors[d].amount, creditors[c].amount);
-        transactions.push({ from: debtors[d].player, to: creditors[c].player, amount: pay });
-        debtors[d].amount -= pay;
-        creditors[c].amount -= pay;
-        if (debtors[d].amount < 0.01) d++;
-        if (creditors[c].amount < 0.01) c++;
-      }
-
-      var html = '<div style="margin-bottom:14px; font-size:12px; color:#555; font-family:Orbitron,sans-serif; letter-spacing:1px;">NETO = Fichas finales − Total prestado</div>';
-      html += '<table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:Orbitron,sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:10px;">Jugador</th><th style="text-align:left; padding:10px;">Recargas</th><th style="text-align:left; padding:10px;">Total prestado</th><th style="text-align:left; padding:10px;">Fichas finales</th><th style="text-align:left; padding:10px;">Neto</th></tr></thead><tbody>';
-      results.forEach(function(r) {
-        var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
-        var sign = r.net > 0 ? '+' : '';
-        var reloadsText = r.reloads.map(function(x) { return '$' + x.toFixed(2); }).join(' + ');
-        html += '<tr style="border-bottom:1px solid #151515;"><td style="padding:10px;"><strong>' + r.player + '</strong></td><td style="padding:10px; font-size:12px;">' + reloadsText + '</td><td style="padding:10px;">$' + r.totalLoaned.toFixed(2) + '</td><td style="padding:10px;">$' + r.final.toFixed(2) + '</td><td style="padding:10px;" class="' + netClass + '">' + sign + '$' + r.net.toFixed(2) + '</td></tr>';
-      });
-      html += '</tbody></table>';
-
-      if (transactions.length === 0) {
-        html += '<div style="text-align:center; padding:18px; color:var(--accent-green); font-family:Orbitron,sans-serif; font-size:12px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ TODOS QUEDARON A MANO</div>';
-      } else {
-        html += '<h4 style="color:var(--accent-gold); margin-bottom:12px; font-family:Orbitron,sans-serif; font-size:12px; letter-spacing:2px;">TRANSFERENCIAS</h4>';
-        transactions.forEach(function(t) {
-          html += '<div class="settle-card"><span style="color:#ff4444; font-weight:700;">' + t.from + '</span> <span style="color:#444;">→</span> <span style="color:var(--accent-gold); font-weight:700;">' + t.to + '</span> <span style="color:var(--accent-green); font-weight:700; margin-left:8px;">$' + t.amount.toFixed(2) + '</span></div>';
-        });
-      }
-      el.innerHTML = html;
+      var html = '<div class="hint">Neto = fichas finales − total prestado</div>';
+      html += renderResultsTable(results);
+      html += renderTransfers(calcTransfers(results));
+      document.getElementById('settleResults').innerHTML = html;
     }
 
     function showBankCheck(totalLoaned, totalFinal, diff) {
       var card = document.getElementById('bankCheckCard');
       var el = document.getElementById('bankCheckResult');
       card.style.display = 'block';
-      var color = Math.abs(diff) < 0.01 ? 'var(--accent-green)' : '#ff4444';
+      var ok = Math.abs(diff) < 0.01;
+      var cls = ok ? 'positive' : 'negative';
       var html = '<div class="bank-grid">';
-      html += '<div><div class="bank-stat-label">Total Prestado</div><div class="bank-stat-value" style="color:var(--accent-orange);">$' + totalLoaned.toFixed(2) + '</div></div>';
-      html += '<div><div class="bank-stat-label">Fichas en Mesa</div><div class="bank-stat-value" style="color:var(--accent-gold);">$' + totalFinal.toFixed(2) + '</div></div>';
-      html += '<div><div class="bank-stat-label">Diferencia</div><div class="bank-stat-value" style="color:' + color + ';">$' + diff.toFixed(2) + '</div></div>';
+      html += '<div><div class="stat-label">Total prestado</div><div class="stat-value" style="color:var(--gold);">' + money(totalLoaned) + '</div></div>';
+      html += '<div><div class="stat-label">Fichas en mesa</div><div class="stat-value">' + money(totalFinal) + '</div></div>';
+      html += '<div><div class="stat-label">Diferencia</div><div class="stat-value ' + cls + '">' + money(diff) + '</div></div>';
       html += '</div>';
-      if (Math.abs(diff) < 0.01) {
-        html += '<div style="text-align:center; color:var(--accent-green); font-family:Orbitron,sans-serif; font-size:11px; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,136,0.3);">✓ CUENTAS DEL BANCO CUADRAN</div>';
+      if (ok) {
+        html += '<div class="bank-msg positive">✓ Las cuentas del banco cuadran</div>';
       } else if (diff > 0) {
-        html += '<div style="text-align:center; color:#ff4444; font-size:13px;">⚠ Hay <strong>$' + diff.toFixed(2) + '</strong> de más en fichas</div>';
+        html += '<div class="bank-msg negative">⚠ Hay ' + money(diff) + ' de más en fichas</div>';
       } else {
-        html += '<div style="text-align:center; color:#ff4444; font-size:13px;">⚠ Faltan <strong>$' + Math.abs(diff).toFixed(2) + '</strong> en fichas</div>';
+        html += '<div class="bank-msg negative">⚠ Faltan ' + money(Math.abs(diff)) + ' en fichas</div>';
       }
       el.innerHTML = html;
     }
 
+    // ========== COMPARTIR ==========
+    function buildShareText(name, date, results) {
+      var lines = ['♦ DIAMOND CLUB — ' + name, formatDate(date), '', 'Resultados:'];
+      results.forEach(function(r) { lines.push('• ' + r.player + ': ' + signedMoney(r.net)); });
+      lines.push('');
+      var tr = calcTransfers(results);
+      if (tr.length === 0) {
+        lines.push('Todos quedaron a mano ✓');
+      } else {
+        lines.push('Transferencias:');
+        tr.forEach(function(t) { lines.push('• ' + t.from + ' → ' + t.to + ': ' + money(t.amount)); });
+      }
+      return lines.join('\n');
+    }
+    function shareText(text) {
+      if (navigator.share) {
+        navigator.share({ text: text }).catch(function() {});
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          toast('Copiado al portapapeles', 'ok');
+        }, function() {
+          window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+        });
+        return;
+      }
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    }
+    function shareLast() {
+      if (!lastSettle) return;
+      shareText(buildShareText(lastSettle.name, lastSettle.date, lastSettle.results));
+    }
+    function shareSession(id) {
+      var s = findSession(id);
+      if (s) shareText(buildShareText(s.name, s.date, s.results));
+    }
+
     // ========== HISTORIAL ==========
+    function findSession(id) {
+      for (var i = 0; i < data.sessions.length; i++) if (data.sessions[i].id === id) return data.sessions[i];
+      return null;
+    }
     // Cargar una sesión guardada en el formulario para corregirla
     function editSession(id) {
-      var s = null;
-      for (var i = 0; i < data.sessions.length; i++) if (data.sessions[i].id === id) s = data.sessions[i];
+      var s = findSession(id);
       if (!s) return;
       editingSessionId = id;
       sessionDraft = {};
+      // Solo los jugadores de la sesión quedan marcados como "juega"
+      data.players.forEach(function(p) { sessionDraft[p] = { reloads: [], final: 0, playing: false }; });
       s.results.forEach(function(r) {
-        sessionDraft[r.player] = { reloads: r.reloads.slice(), final: r.final };
+        sessionDraft[r.player] = { reloads: r.reloads.slice(), final: r.final, playing: true };
       });
       document.getElementById('sessDate').value = s.date;
       document.getElementById('sessName').value = s.name;
-      document.getElementById('editBannerName').textContent = s.name + ' (' + s.date + ')';
+      document.getElementById('editBannerName').textContent = s.name + ' (' + formatDate(s.date) + ')';
       document.getElementById('settleCard').style.display = 'none';
       document.getElementById('bankCheckCard').style.display = 'none';
       switchTab('sessions');
@@ -879,31 +1048,42 @@
       document.getElementById('bankCheckCard').style.display = 'none';
       renderSessionForm();
     }
+    function deleteSession(id) {
+      var s = findSession(id);
+      if (!s) return;
+      confirmDialog('¿Borrar la sesión "' + s.name + '"?', function() {
+        data.sessions = data.sessions.filter(function(x) { return x.id !== id; });
+        save();
+        renderHistory();
+        toast('Sesión borrada', 'ok');
+      });
+    }
+    function toggleHist(id) {
+      var el = document.getElementById('hist_' + id);
+      if (el) el.classList.toggle('open');
+    }
     function renderHistory() {
       var el = document.getElementById('historyList');
-      if (data.sessions.length === 0) { el.innerHTML = '<div class="empty">No hay sesiones registradas</div>'; return; }
+      if (data.sessions.length === 0) { el.innerHTML = '<div class="card"><div class="empty">Aún no hay sesiones registradas</div></div>'; return; }
       var html = '';
-      var reversed = data.sessions.slice().reverse();
-      reversed.forEach(function(s) {
-        html += '<div class="card" style="margin-bottom:14px;">';
-        html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">';
-        html += '<h4 style="color:var(--accent-gold); margin:0; font-family:Orbitron,sans-serif; font-size:13px; letter-spacing:1px;">' + s.name + ' <span style="color:#444; font-size:11px; font-weight:400;">(' + s.date + ')</span></h4>';
-        html += '<div style="display:flex; align-items:center; gap:8px;">';
-        html += '<span class="tag">$' + s.totalLoaned.toFixed(2) + ' PRESTADO</span>';
+      data.sessions.slice().reverse().forEach(function(s) {
+        var ok = Math.abs(s.bankDiff) < 0.01;
+        html += '<div class="hist-card" id="hist_' + s.id + '">';
+        html += '<div class="hist-head" onclick="toggleHist(' + s.id + ')">';
+        html += '<div class="hist-main"><div class="hist-name">' + escHtml(s.name) + '</div>';
+        html += '<div class="hist-meta">' + formatDate(s.date) + ' · ' + s.results.length + ' jugadores · ' + money(s.totalLoaned) + ' prestado</div></div>';
+        html += '<span class="tag ' + (ok ? 'ok' : 'warn') + '">' + (ok ? '✓ Cuadra' : '⚠ ' + money(s.bankDiff)) + '</span>';
+        html += '<span class="hist-arrow">▾</span>';
+        html += '</div>';
+        html += '<div class="hist-body">';
+        html += renderResultsTable(s.results);
+        html += renderTransfers(calcTransfers(s.results));
+        html += '<div class="actions">';
         html += '<button class="btn btn-outline btn-small" onclick="editSession(' + s.id + ')">✏️ Editar</button>';
+        html += '<button class="btn btn-outline btn-small" onclick="shareSession(' + s.id + ')">📤 Compartir</button>';
+        html += '<button class="btn btn-danger btn-small" onclick="deleteSession(' + s.id + ')">🗑 Borrar</button>';
         html += '</div>';
         html += '</div>';
-        html += '<table style="width:100%; border-collapse:collapse; font-size:14px;"><thead><tr style="color:var(--accent-orange); border-bottom:1px solid #2a1a1a; font-family:Orbitron,sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase;"><th style="text-align:left; padding:8px;">Jugador</th><th style="text-align:left; padding:8px;">Recargas</th><th style="text-align:left; padding:8px;">Total prestado</th><th style="text-align:left; padding:8px;">Fichas finales</th><th style="text-align:left; padding:8px;">Neto</th></tr></thead><tbody>';
-        s.results.forEach(function(r) {
-          var netClass = r.net > 0 ? 'positive' : r.net < 0 ? 'negative' : 'neutral';
-          var sign = r.net > 0 ? '+' : '';
-          var reloadsText = r.reloads.map(function(x) { return '$' + x.toFixed(2); }).join(' + ');
-          html += '<tr style="border-bottom:1px solid #151515;"><td style="padding:8px;">' + r.player + '</td><td style="padding:8px; font-size:12px;">' + reloadsText + '</td><td style="padding:8px;">$' + r.totalLoaned.toFixed(2) + '</td><td style="padding:8px;">$' + r.final.toFixed(2) + '</td><td style="padding:8px;" class="' + netClass + '">' + sign + '$' + r.net.toFixed(2) + '</td></tr>';
-        });
-        html += '</tbody></table>';
-        if (Math.abs(s.bankDiff) >= 0.01) {
-          html += '<div style="margin-top:10px; font-size:12px; color:#ff4444; font-family:Orbitron,sans-serif;">⚠ DIFERENCIA EN BANCO: $' + s.bankDiff.toFixed(2) + '</div>';
-        }
         html += '</div>';
       });
       el.innerHTML = html;
@@ -931,22 +1111,24 @@
             editingSessionId = null;
             save();
             renderPlayers(); renderHistory(); renderSessionForm();
-            alert('Datos importados correctamente');
-          } else { alert('Formato incorrecto'); }
-        } catch(err) { alert('Error: ' + err.message); }
+            toast('Datos importados correctamente', 'ok');
+          } else { toast('Formato incorrecto', 'error'); }
+        } catch(err) { toast('Error: ' + err.message, 'error'); }
         input.value = '';
       };
       reader.readAsText(file);
     }
     function clearAll() {
-      if (!confirm('¿Borrar TODOS los datos? Esto no se puede deshacer.')) return;
-      data = {players: [], sessions: []};
-      sessionDraft = {};
-      editingSessionId = null;
-      save();
-      renderPlayers(); renderHistory(); renderSessionForm();
-      document.getElementById('settleCard').style.display = 'none';
-      document.getElementById('bankCheckCard').style.display = 'none';
+      confirmDialog('¿Borrar TODOS los datos? Esto no se puede deshacer.', function() {
+        data = {players: [], sessions: []};
+        sessionDraft = {};
+        editingSessionId = null;
+        save();
+        renderPlayers(); renderHistory(); renderSessionForm();
+        document.getElementById('settleCard').style.display = 'none';
+        document.getElementById('bankCheckCard').style.display = 'none';
+        toast('Datos borrados', 'ok');
+      });
     }
 
     // Init
